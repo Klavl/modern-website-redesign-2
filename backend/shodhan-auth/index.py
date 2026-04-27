@@ -15,9 +15,6 @@ import secrets
 import hashlib
 import psycopg2
 
-SCHEMA = os.environ.get("MAIN_DB_SCHEMA", "public")
-
-
 def get_conn():
     return psycopg2.connect(os.environ["DATABASE_URL"])
 
@@ -54,7 +51,7 @@ def get_instructor_by_token(cur, token):
     if not token:
         return None
     cur.execute(
-        f"SELECT id, full_name, city, bio, photo_url, role FROM {SCHEMA}.shodhan_instructors WHERE session_token = %s",
+        "SELECT id, full_name, city, bio, photo_url, role FROM shodhan_instructors WHERE session_token = %s",
         (token,),
     )
     return cur.fetchone()
@@ -94,7 +91,7 @@ def handler(event: dict, context) -> dict:
 
         pw_hash = hash_password(password)
         cur.execute(
-            f"SELECT id, full_name, city, bio, photo_url, role FROM {SCHEMA}.shodhan_instructors WHERE login = %s AND password_hash = %s",
+            "SELECT id, full_name, city, bio, photo_url, role FROM shodhan_instructors WHERE login = %s AND password_hash = %s",
             (login_val, pw_hash),
         )
         row = cur.fetchone()
@@ -104,7 +101,7 @@ def handler(event: dict, context) -> dict:
 
         inst_id, name, city, bio, photo_url, role = row
         new_token = secrets.token_hex(32)
-        cur.execute(f"UPDATE {SCHEMA}.shodhan_instructors SET session_token = %s WHERE id = %s", (new_token, inst_id))
+        cur.execute("UPDATE shodhan_instructors SET session_token = %s WHERE id = %s", (new_token, inst_id))
         conn.commit()
         conn.close()
         return ok({
@@ -133,7 +130,7 @@ def handler(event: dict, context) -> dict:
     # ── LOGOUT ────────────────────────────────────────────────────────────────
     if action == "logout":
         if token:
-            cur.execute(f"UPDATE {SCHEMA}.shodhan_instructors SET session_token = NULL WHERE session_token = %s", (token,))
+            cur.execute("UPDATE shodhan_instructors SET session_token = NULL WHERE session_token = %s", (token,))
             conn.commit()
         conn.close()
         return ok({"success": True})
@@ -146,7 +143,7 @@ def handler(event: dict, context) -> dict:
             return err("Требуется авторизация", 401)
         inst_id = row[0]
         cur.execute(
-            f"UPDATE {SCHEMA}.shodhan_instructors SET bio = %s, photo_url = %s, city = %s WHERE id = %s",
+            "UPDATE shodhan_instructors SET bio = %s, photo_url = %s, city = %s WHERE id = %s",
             (body.get("bio", ""), body.get("photo_url", ""), body.get("city", ""), inst_id),
         )
         conn.commit()
@@ -160,7 +157,7 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return error
         cur.execute(
-            f"SELECT id, full_name, login, city, role, created_at FROM {SCHEMA}.shodhan_instructors ORDER BY created_at"
+            "SELECT id, full_name, login, city, role, created_at FROM shodhan_instructors ORDER BY created_at"
         )
         rows = cur.fetchall()
         conn.close()
@@ -185,14 +182,14 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return err("Заполните логин, пароль и имя")
 
-        cur.execute(f"SELECT id FROM {SCHEMA}.shodhan_instructors WHERE login = %s", (login_val,))
+        cur.execute("SELECT id FROM shodhan_instructors WHERE login = %s", (login_val,))
         if cur.fetchone():
             conn.close()
             return err("Инструктор с таким логином уже существует")
 
         pw_hash = hash_password(password)
         cur.execute(
-            f"INSERT INTO {SCHEMA}.shodhan_instructors (full_name, phone, city, login, password_hash, role) VALUES (%s, %s, %s, %s, %s, 'instructor') RETURNING id",
+            "INSERT INTO shodhan_instructors (full_name, phone, city, login, password_hash, role) VALUES (%s, %s, %s, %s, %s, 'instructor') RETURNING id",
             (full_name, "", city, login_val, pw_hash),
         )
         new_id = cur.fetchone()[0]
@@ -214,7 +211,7 @@ def handler(event: dict, context) -> dict:
         if target_id == row[0]:
             conn.close()
             return err("Нельзя удалить себя")
-        cur.execute(f"DELETE FROM {SCHEMA}.shodhan_instructors WHERE id = %s AND role != 'admin'", (target_id,))
+        cur.execute("DELETE FROM shodhan_instructors WHERE id = %s AND role != 'admin'", (target_id,))
         conn.commit()
         conn.close()
         return ok({"success": True})

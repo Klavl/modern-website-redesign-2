@@ -14,20 +14,12 @@ export default function EventsSection({ events }: Props) {
       <section id="events" className="py-24 px-5"
         style={{ background: "linear-gradient(180deg,#0a1a0f,#081218)" }}>
         <div className="max-w-6xl mx-auto">
-          <FadeIn className="flex items-end justify-between mb-12">
-            <div>
-              <h2 className="font-display mb-3"
-                style={{ fontFamily: "'Oswald',sans-serif", fontSize: "clamp(32px,5vw,56px)", fontWeight: 700, color: "#fff", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                БЛИЖАЙШИЕ<br />МЕРОПРИЯТИЯ
-              </h2>
-              <div className="w-20 h-1 rounded-full" style={{ background: "linear-gradient(90deg,#3a8f4a,#5cb86e)" }} />
-            </div>
-            <a href="/login"
-              className="hidden sm:flex items-center gap-2 text-sm px-5 py-2.5 rounded-full font-medium transition-all duration-200 hover:scale-105"
-              style={{ border: "1px solid rgba(92,184,110,0.35)", color: "#5cb86e", background: "rgba(92,184,110,0.05)" }}>
-              <Icon name="User" size={14} />
-              Кабинет инструктора
-            </a>
+          <FadeIn className="mb-12">
+            <h2 className="font-display mb-3"
+              style={{ fontFamily: "'Oswald',sans-serif", fontSize: "clamp(32px,5vw,56px)", fontWeight: 700, color: "#fff", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+              БЛИЖАЙШИЕ<br />МЕРОПРИЯТИЯ
+            </h2>
+            <div className="w-20 h-1 rounded-full" style={{ background: "linear-gradient(90deg,#3a8f4a,#5cb86e)" }} />
           </FadeIn>
 
           {events.length === 0 ? (
@@ -36,8 +28,7 @@ export default function EventsSection({ events }: Props) {
                 style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.07)" }}>
                 <Icon name="CalendarX" size={36} className="mx-auto mb-4 opacity-20" />
                 <p className="text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>
-                  Мероприятий пока нет.<br />
-                  <a href="/login" style={{ color: "rgba(92,184,110,0.6)" }}>Инструкторы</a> — добавьте своё расписание!
+                  Мероприятий пока нет.<br />Скоро появятся новые события.
                 </p>
               </div>
             </FadeIn>
@@ -140,14 +131,7 @@ export default function EventsSection({ events }: Props) {
             </div>
           )}
 
-          <FadeIn className="text-center mt-10">
-            <a href="/login"
-              className="inline-flex items-center gap-2 text-sm px-6 py-3 rounded-full font-medium transition-all duration-200 hover:scale-105 sm:hidden"
-              style={{ border: "1px solid rgba(92,184,110,0.35)", color: "#5cb86e", background: "rgba(92,184,110,0.05)" }}>
-              <Icon name="User" size={14} />
-              Кабинет инструктора
-            </a>
-          </FadeIn>
+
         </div>
       </section>
 
