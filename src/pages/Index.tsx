@@ -3,6 +3,7 @@ import { getPublicEvents, type ShodhanEvent } from "@/lib/api";
 import HeroSection from "@/components/shodhan/HeroSection";
 import AboutSection from "@/components/shodhan/AboutSection";
 import WhySection from "@/components/shodhan/WhySection";
+import VideoSection from "@/components/shodhan/VideoSection";
 import EventsSection from "@/components/shodhan/EventsSection";
 
 export default function Index() {
@@ -25,6 +26,7 @@ export default function Index() {
       <HeroSection scrolled={scrolled} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
       <AboutSection />
       <WhySection />
+      <VideoSection />
       <EventsSection events={events} />
     </div>
   );
