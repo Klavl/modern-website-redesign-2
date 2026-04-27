@@ -1,9 +1,14 @@
+import { useState } from "react";
 import Icon from "@/components/ui/icon";
 import FadeIn from "./FadeIn";
 import CityMap from "./CityMap";
 import { DMITRY_PHOTO, ELEMENTS_16, AFTER_MEDITATION, INSTRUCTORS_FULL } from "./shared";
 
+const VIDEO_COVER = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/f20895ca-6d45-426c-acf2-a17a0dffda27.png";
+const VIDEO_EMBED = "https://rutube.ru/play/embed/ff6fb89cc23dfdd417528a5a76f2b029/";
+
 export default function AboutSection() {
+  const [playing, setPlaying] = useState(false);
   return (
     <>
       {/* ══════════ ЧТО ТАКОЕ ШОДХАН ══════════ */}
@@ -48,24 +53,33 @@ export default function AboutSection() {
             </FadeIn>
 
             <FadeIn delay={0.2}>
-              <div className="relative rounded-2xl overflow-hidden cursor-pointer group"
-                style={{ aspectRatio: "16/9", background: "linear-gradient(135deg,#0d2a15,#0a1a30)" }}>
-                <img
-                  src="https://images.unsplash.com/photo-1545389336-cf090694435e?w=800&q=80"
-                  alt="Медитация Шодхан"
-                  className="w-full h-full object-cover opacity-70 group-hover:opacity-85 transition-opacity duration-400"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-18 h-18 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
-                    style={{ width: 72, height: 72, background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", border: "2px solid rgba(255,255,255,0.4)" }}>
-                    <Icon name="Play" size={28} />
+              <div className="relative rounded-2xl overflow-hidden"
+                style={{ aspectRatio: "16/9", boxShadow: "0 20px 60px rgba(0,0,0,0.6)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                {playing ? (
+                  <iframe
+                    src={`${VIDEO_EMBED}?autoplay=1`}
+                    title="Что такое Шодхан"
+                    allow="clipboard-write; autoplay"
+                    allowFullScreen
+                    className="w-full h-full"
+                    style={{ border: "none", display: "block" }}
+                  />
+                ) : (
+                  <div className="relative w-full h-full cursor-pointer group" onClick={() => setPlaying(true)}>
+                    <img
+                      src={VIDEO_COVER}
+                      alt="Что такое Шодхан"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.3)" }} />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+                        style={{ width: 72, height: 72, background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", border: "2px solid rgba(255,255,255,0.45)", boxShadow: "0 0 40px rgba(92,184,110,0.3)" }}>
+                        <Icon name="Play" size={28} style={{ color: "#fff", marginLeft: 4 }} />
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="absolute bottom-4 left-4 right-4">
-                  <p className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.9)", fontFamily: "'Montserrat',sans-serif" }}>
-                    Смотреть видео о методе
-                  </p>
-                </div>
+                )}
               </div>
             </FadeIn>
           </div>
