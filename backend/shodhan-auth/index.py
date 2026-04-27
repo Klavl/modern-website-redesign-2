@@ -188,9 +188,11 @@ def handler(event: dict, context) -> dict:
             return err("Инструктор с таким логином уже существует")
 
         pw_hash = hash_password(password)
+        # phone уникален и NOT NULL — используем логин как заполнитель
+        phone_placeholder = f"login:{login_val}"
         cur.execute(
             "INSERT INTO shodhan_instructors (full_name, phone, city, login, password_hash, role) VALUES (%s, %s, %s, %s, %s, 'instructor') RETURNING id",
-            (full_name, "", city, login_val, pw_hash),
+            (full_name, phone_placeholder, city, login_val, pw_hash),
         )
         new_id = cur.fetchone()[0]
         conn.commit()
