@@ -2,16 +2,17 @@ import { useState } from "react";
 import FadeIn from "./FadeIn";
 
 const BASE = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/rutube-thumbs";
+const V = "?v=2";
 
 const VIDEOS = [
-  { url: "https://rutube.ru/video/d8a7ba60e26cfdbcc6e9eea93d9ad9c7/", thumb: `${BASE}/review_0.jpg` },
-  { url: "https://rutube.ru/video/8f2484e0e5ca253e32cea2945db51372/", thumb: `${BASE}/review_1.jpg` },
-  { url: "https://rutube.ru/video/3322e4227d230669225848181a330d49/", thumb: `${BASE}/review_2.jpg` },
-  { url: "https://rutube.ru/video/e3029ca73a9f9f2097a29f970ab02840/", thumb: `${BASE}/review_3.jpg` },
-  { url: "https://rutube.ru/video/1b8cb409c646c7a545c1dd1e29323805/", thumb: `${BASE}/review_4.jpg` },
-  { url: "https://rutube.ru/video/db5095fa28cd19c42a34ba6be3466e1b/", thumb: `${BASE}/review_5.jpg` },
-  { url: "https://rutube.ru/video/adbd840929c7a79a6321185f79c19192/", thumb: `${BASE}/review_6.jpg` },
-  { url: "https://rutube.ru/video/c4846d76fde4e0149e8047d76e89b3a9/", thumb: `${BASE}/review_7.jpg` },
+  { url: "https://rutube.ru/video/d8a7ba60e26cfdbcc6e9eea93d9ad9c7/", thumb: `${BASE}/review_0.jpg${V}` },
+  { url: "https://rutube.ru/video/8f2484e0e5ca253e32cea2945db51372/", thumb: `${BASE}/review_1.jpg${V}` },
+  { url: "https://rutube.ru/video/3322e4227d230669225848181a330d49/", thumb: `${BASE}/review_2.jpg${V}` },
+  { url: "https://rutube.ru/video/e3029ca73a9f9f2097a29f970ab02840/", thumb: `${BASE}/review_3.jpg${V}` },
+  { url: "https://rutube.ru/video/1b8cb409c646c7a545c1dd1e29323805/", thumb: `${BASE}/review_4.jpg${V}` },
+  { url: "https://rutube.ru/video/db5095fa28cd19c42a34ba6be3466e1b/", thumb: `${BASE}/review_5.jpg${V}` },
+  { url: "https://rutube.ru/video/adbd840929c7a79a6321185f79c19192/", thumb: `${BASE}/review_6.jpg${V}` },
+  { url: "https://rutube.ru/video/c4846d76fde4e0149e8047d76e89b3a9/", thumb: `${BASE}/review_7.jpg${V}` },
 ];
 
 function getEmbedUrl(url: string) {
