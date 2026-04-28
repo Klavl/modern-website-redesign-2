@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMe, logout, adminListInstructors, adminCreateInstructor, adminDeleteInstructor } from "@/lib/api";
+import { getMe, logout, adminListInstructors, adminCreateInstructor, adminDeleteInstructor, adminSetCredentials } from "@/lib/api";
 import Icon from "@/components/ui/icon";
 
 type InstructorRow = {
@@ -13,6 +13,7 @@ type InstructorRow = {
 };
 
 const emptyForm = () => ({ full_name: "", login: "", password: "", city: "" });
+const emptyCredsForm = () => ({ login: "", password: "" });
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -24,8 +25,12 @@ export default function Admin() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [credsId, setCredsId] = useState<number | null>(null);
+  const [credsForm, setCredsForm] = useState(emptyCredsForm());
+  const [credsSaving, setCredsSaving] = useState(false);
 
   const set = (k: string, v: string) => setForm(prev => ({ ...prev, [k]: v }));
+  const setCreds = (k: string, v: string) => setCredsForm(prev => ({ ...prev, [k]: v }));
 
   const loadData = async () => {
     const me = await getMe();
@@ -34,6 +39,11 @@ export default function Admin() {
       return;
     }
     const res = await adminListInstructors();
+    if (res.error) {
+      setError("Ошибка загрузки: " + res.error);
+      setLoading(false);
+      return;
+    }
     setInstructors(res.instructors || []);
     setLoading(false);
   };
@@ -71,6 +81,27 @@ export default function Admin() {
     if (res.error) { setError(res.error); return; }
     setDeleteId(null);
     loadData();
+  };
+
+  const handleSetCreds = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(""); setSuccess("");
+    setCredsSaving(true);
+    try {
+      const res = await adminSetCredentials(credsId!, credsForm.login, credsForm.password);
+      if (res.error) {
+        setError(res.error);
+      } else {
+        setSuccess("Логин и пароль установлены!");
+        setCredsId(null);
+        setCredsForm(emptyCredsForm());
+        loadData();
+      }
+    } catch {
+      setError("Ошибка соединения");
+    } finally {
+      setCredsSaving(false);
+    }
   };
 
   if (loading) {
@@ -128,7 +159,7 @@ export default function Admin() {
             style={{ color: "rgba(255,255,255,0.5)", fontFamily: "'Oswald',sans-serif" }}>
             Инструкторы ({instructors.filter(i => i.role === "instructor").length})
           </h2>
-          <button onClick={() => { setShowForm(!showForm); setError(""); setSuccess(""); }}
+          <button onClick={() => { setShowForm(!showForm); setCredsId(null); setError(""); setSuccess(""); }}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wide transition-all hover:opacity-90"
             style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff" }}>
             <Icon name={showForm ? "X" : "Plus"} size={14} />
@@ -180,6 +211,55 @@ export default function Admin() {
           </div>
         )}
 
+        {/* Set credentials form */}
+        {credsId !== null && (
+          <div className="mb-6 rounded-2xl p-6"
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(201,168,76,0.3)" }}>
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-sm font-bold uppercase tracking-widest"
+                style={{ fontFamily: "'Oswald',sans-serif", color: "#c9a84c" }}>
+                Назначить логин и пароль — {instructors.find(i => i.id === credsId)?.full_name}
+              </h3>
+              <button onClick={() => { setCredsId(null); setCredsForm(emptyCredsForm()); }}
+                className="p-1 opacity-50 hover:opacity-100"
+                style={{ color: "#fff" }}>
+                <Icon name="X" size={16} />
+              </button>
+            </div>
+            <form onSubmit={handleSetCreds} className="grid sm:grid-cols-2 gap-4">
+              {[
+                { key: "login", label: "Логин", placeholder: "instructor_login", type: "text" },
+                { key: "password", label: "Пароль", placeholder: "Надёжный пароль", type: "password" },
+              ].map(f => (
+                <div key={f.key}>
+                  <label className="block text-xs font-semibold tracking-widest uppercase mb-2"
+                    style={{ color: "rgba(201,168,76,0.8)", fontFamily: "'Oswald',sans-serif" }}>
+                    {f.label}
+                  </label>
+                  <input
+                    type={f.type}
+                    placeholder={f.placeholder}
+                    value={credsForm[f.key as keyof typeof credsForm]}
+                    onChange={e => setCreds(f.key, e.target.value)}
+                    required
+                    className="w-full rounded-xl px-4 py-3 text-sm outline-none"
+                    style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }}
+                    onFocus={e => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.5)")}
+                    onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
+                  />
+                </div>
+              ))}
+              <div className="sm:col-span-2">
+                <button type="submit" disabled={credsSaving}
+                  className="px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-all hover:opacity-90 disabled:opacity-50"
+                  style={{ background: "linear-gradient(135deg,#a87a20,#c9a84c)", color: "#fff" }}>
+                  {credsSaving ? "Сохраняю..." : "Сохранить"}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
         {/* Instructors list */}
         <div className="rounded-2xl overflow-hidden"
           style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
@@ -200,21 +280,38 @@ export default function Admin() {
               <div key={ins.id}
                 className="grid grid-cols-[1fr_1fr_1fr_auto] items-center px-5 py-4 text-sm"
                 style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                <div>
+                <div className="flex items-center gap-2 flex-wrap">
                   <span style={{ color: "#fff" }}>{ins.full_name}</span>
                   {ins.role === "admin" && (
-                    <span className="ml-2 text-xs px-2 py-0.5 rounded-full"
+                    <span className="text-xs px-2 py-0.5 rounded-full"
                       style={{ background: "rgba(201,168,76,0.15)", color: "#c9a84c", fontSize: 10 }}>
                       admin
                     </span>
                   )}
+                  {ins.role !== "admin" && !ins.login && (
+                    <span className="text-xs px-2 py-0.5 rounded-full"
+                      style={{ background: "rgba(200,50,50,0.15)", color: "#ff8080", fontSize: 10 }}>
+                      нет логина
+                    </span>
+                  )}
                 </div>
-                <span style={{ color: "rgba(255,255,255,0.55)", fontFamily: "monospace" }}>{ins.login || "—"}</span>
+                <span style={{ color: ins.login ? "rgba(255,255,255,0.55)" : "rgba(255,100,100,0.5)", fontFamily: "monospace" }}>
+                  {ins.login || "—"}
+                </span>
                 <span style={{ color: "rgba(255,255,255,0.55)" }}>{ins.city || "—"}</span>
-                <div>
+                <div className="flex items-center gap-1">
+                  {ins.role !== "admin" && !ins.login && (
+                    <button
+                      onClick={() => { setCredsId(ins.id); setCredsForm(emptyCredsForm()); setShowForm(false); setError(""); setSuccess(""); }}
+                      title="Назначить логин и пароль"
+                      className="p-1.5 rounded-lg transition-all hover:opacity-80"
+                      style={{ color: "#c9a84c" }}>
+                      <Icon name="KeyRound" size={14} />
+                    </button>
+                  )}
                   {ins.role !== "admin" && (
                     deleteId === ins.id ? (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
                         <button onClick={() => handleDelete(ins.id)}
                           className="text-xs px-3 py-1 rounded-lg transition-all hover:opacity-80"
                           style={{ background: "rgba(200,50,50,0.2)", color: "#ff8080", border: "1px solid rgba(200,50,50,0.3)" }}>

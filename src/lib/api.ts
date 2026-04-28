@@ -70,6 +70,11 @@ export async function adminDeleteInstructor(id: number) {
   return callAuth({ action: "admin_delete", id }, token || undefined);
 }
 
+export async function adminSetCredentials(id: number, login: string, password: string) {
+  const token = getToken();
+  return callAuth({ action: "admin_set_credentials", id, login, password }, token || undefined);
+}
+
 export async function logout() {
   const token = getToken();
   if (token) await callAuth({ action: "logout" }, token);

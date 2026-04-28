@@ -218,5 +218,31 @@ def handler(event: dict, context) -> dict:
         conn.close()
         return ok({"success": True})
 
+    # ── ADMIN: SET CREDENTIALS ────────────────────────────────────────────────
+    if action == "admin_set_credentials":
+        row, error = require_admin(cur, token)
+        if error:
+            conn.close()
+            return error
+        target_id = body.get("id")
+        login_val = (body.get("login") or "").strip()
+        password = (body.get("password") or "").strip()
+        if not target_id or not login_val or not password:
+            conn.close()
+            return err("Заполните id, логин и пароль")
+        cur.execute("SELECT id FROM shodhan_instructors WHERE login = %s AND id != %s", (login_val, target_id))
+        if cur.fetchone():
+            conn.close()
+            return err("Такой логин уже занят")
+        pw_hash = hash_password(password)
+        phone_placeholder = f"login:{login_val}"
+        cur.execute(
+            "UPDATE shodhan_instructors SET login = %s, password_hash = %s, phone = %s WHERE id = %s AND role != 'admin'",
+            (login_val, pw_hash, phone_placeholder, target_id),
+        )
+        conn.commit()
+        conn.close()
+        return ok({"success": True})
+
     conn.close()
     return err("Неизвестное действие", 400)
