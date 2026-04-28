@@ -50,7 +50,7 @@ function VideoCard({ url, thumb, index }: { url: string; thumb: string; index: n
             <img
               src={thumb}
               alt={`Отзыв ${index + 1}`}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0"
               style={{ background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)" }} />
