@@ -142,17 +142,13 @@ export default function HeroSection({ scrolled, menuOpen, setMenuOpen }: Props) 
               </p>
               <div className="flex flex-wrap gap-2">
                 {INSTRUCTORS_MAIN.slice(0, 9).map((ins, i) => (
-                  <div key={i} className="flex flex-col items-center gap-1 group cursor-pointer">
+                  <div key={i} className="group cursor-pointer">
                     <div className="rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-110"
                       style={{ width: 44, height: 44, border: "2px solid rgba(255,255,255,0.3)", boxShadow: "0 3px 12px rgba(0,0,0,0.5)" }}>
-                      <img src={ins.img} alt={ins.name}
+                      <img src={ins.img} alt=""
                         className="w-full h-full object-cover object-top"
-                        onError={e => { (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(ins.name.replace('\n',' '))}&background=1a3a22&color=5cb86e&size=44`; }} />
+                        onError={e => { (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=ШД&background=1a3a22&color=5cb86e&size=44`; }} />
                     </div>
-                    <span className="text-center leading-tight"
-                      style={{ fontSize: "9px", color: "rgba(255,255,255,0.55)", fontFamily: "'Montserrat', sans-serif", maxWidth: 50, wordBreak: "break-word" }}>
-                      {ins.name.replace('\n', ' ')}
-                    </span>
                   </div>
                 ))}
               </div>

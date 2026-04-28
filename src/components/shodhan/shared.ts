@@ -25,16 +25,15 @@ export const useInView = (threshold = 0.1) => {
 export const DMITRY_PHOTO = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/6e2df17f-042f-4f94-95b3-dfc3557a23c0.png";
 
 export const INSTRUCTORS_MAIN = [
-  { name: "Дмитрий\nХара", img: DMITRY_PHOTO },
-  { name: "Мария\nСветлова", img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&q=80" },
-  { name: "Анна\nБерёзова", img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=120&q=80" },
-  { name: "Иван\nПетров", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=80" },
-  { name: "Ольга\nМорозова", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=80" },
-  { name: "Сергей\nВолков", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80" },
-  { name: "Наталья\nЛебедева", img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&q=80" },
-  { name: "Павел\nСоколов", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&q=80" },
-  { name: "Елена\nКузнецова", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&q=80" },
-  { name: "Алина\nФёдорова", img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&q=80" },
+  { img: DMITRY_PHOTO },
+  { img: "https://cdn.poehali.dev/files/7dcc45c1-c7e8-402d-86f7-a0cdca2cd9d0.png" },
+  { img: "https://cdn.poehali.dev/files/f7a50ea4-30e4-42e5-8764-b0ca5e793faf.png" },
+  { img: "https://cdn.poehali.dev/files/a1246f76-0823-46a0-a21c-f7e30bc92df9.png" },
+  { img: "https://cdn.poehali.dev/files/7c763edb-99f0-4fb9-8995-08dd19a893fb.png" },
+  { img: "https://cdn.poehali.dev/files/51708a07-06ec-4a23-aa7d-dfa1a3fb822b.png" },
+  { img: "https://cdn.poehali.dev/files/0e403994-a766-439f-83f5-5031a9694533.png" },
+  { img: "https://cdn.poehali.dev/files/faad76da-0ac4-48b5-8ae7-edb5bc0fa872.png" },
+  { img: "https://cdn.poehali.dev/files/4f24f45a-682f-479a-b3b2-900bed0911d0.png" },
 ];
 
 export const ELEMENTS_16 = [
