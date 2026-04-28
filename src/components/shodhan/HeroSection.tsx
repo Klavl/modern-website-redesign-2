@@ -77,12 +77,9 @@ export default function HeroSection({ scrolled, menuOpen, setMenuOpen }: Props) 
 
         </div>
 
-        {/* Фото Дмитрия — правая сторона, во весь рост */}
-        <div className="absolute bottom-0 right-0 z-10 pointer-events-none"
-          style={{
-            width: "clamp(360px, 60vw, 820px)",
-            opacity: 1,
-          }}>
+        {/* Фото Дмитрия — правая сторона, скрыто на маленьких экранах */}
+        <div className="absolute bottom-0 right-0 z-10 pointer-events-none hidden sm:block"
+          style={{ width: "clamp(280px, 48vw, 820px)" }}>
           <img
             src={DMITRY_PHOTO}
             alt="Дмитрий Хара"
@@ -93,63 +90,68 @@ export default function HeroSection({ scrolled, menuOpen, setMenuOpen }: Props) 
             style={{ background: "radial-gradient(ellipse, rgba(92,184,110,0.18) 0%, transparent 70%)" }} />
         </div>
 
-        {/* Контент — левая сторона */}
-        <div className="relative z-20 flex flex-col justify-center min-h-screen px-6 md:px-16 max-w-2xl">
-          <div className="pt-24">
-            <div style={{ opacity: 1 }}>
-              <p className="text-xs font-semibold tracking-widest uppercase mb-3"
-                style={{ fontFamily: "'Oswald',sans-serif", color: "#5cb86e", letterSpacing: "0.2em" }}>
-                Авторский метод
-              </p>
-              <h1 className="font-display leading-none mb-4"
-                style={{ fontFamily: "'Oswald', sans-serif", fontSize: "clamp(70px, 14vw, 160px)", fontWeight: 700, color: "#fff", textShadow: "0 0 80px rgba(92,184,110,0.2)", letterSpacing: "0.05em" }}>
-                ШОДХАН
-              </h1>
-            </div>
-            <div style={{ opacity: 1 }}>
-              <p className="text-base md:text-xl font-medium mb-2"
-                style={{ fontFamily: "'Montserrat', sans-serif", color: "rgba(255,255,255,0.88)" }}>
-                Активная медитация первоэлементов
-              </p>
-              <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
-                Автор метода — <strong style={{ color: "rgba(255,255,255,0.8)" }}>Дмитрий Хара</strong>
-              </p>
-              <p className="text-sm mb-8" style={{ color: "rgba(255,255,255,0.5)" }}>
-                Шодхан в твоём городе! Выбери своего инструктора
-              </p>
+        {/* Контент */}
+        <div className="relative z-20 flex flex-col justify-center min-h-screen px-6 md:px-16"
+          style={{ maxWidth: "clamp(300px, 55vw, 720px)" }}>
+          <div className="pt-20 pb-10">
+            <p className="text-xs font-semibold tracking-widest uppercase mb-3"
+              style={{ fontFamily: "'Oswald',sans-serif", color: "#5cb86e", letterSpacing: "0.2em" }}>
+              Авторский метод
+            </p>
+            <h1 className="font-display leading-none mb-4"
+              style={{ fontFamily: "'Oswald', sans-serif", fontSize: "clamp(56px, 12vw, 160px)", fontWeight: 700, color: "#fff", textShadow: "0 0 80px rgba(92,184,110,0.2)", letterSpacing: "0.05em" }}>
+              ШОДХАН
+            </h1>
+
+            <p className="font-medium mb-2"
+              style={{ fontFamily: "'Montserrat', sans-serif", color: "rgba(255,255,255,0.88)", fontSize: "clamp(14px,2vw,20px)" }}>
+              Активная медитация первоэлементов
+            </p>
+            <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+              Автор метода — <strong style={{ color: "rgba(255,255,255,0.8)" }}>Дмитрий Хара</strong>
+            </p>
+            <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.5)" }}>
+              Шодхан в твоём городе! Выбери своего инструктора
+            </p>
+
+            {/* Мобильное фото */}
+            <div className="sm:hidden mb-6 flex justify-center">
+              <div className="rounded-2xl overflow-hidden"
+                style={{ width: "min(260px, 70vw)", aspectRatio: "3/4", border: "2px solid rgba(92,184,110,0.25)", boxShadow: "0 12px 40px rgba(0,0,0,0.6)" }}>
+                <img src={DMITRY_PHOTO} alt="Дмитрий Хара" className="w-full h-full object-cover object-top" />
+              </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 mb-12"
-              style={{ opacity: 1 }}>
+            <div className="flex flex-col xs:flex-row gap-3 mb-8">
               <a href="#about"
-                className="px-8 py-3.5 rounded-full font-semibold text-sm tracking-widest uppercase transition-all duration-300 hover:scale-105 text-center"
-                style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff", boxShadow: "0 6px 24px rgba(60,150,80,0.45)" }}>
+                className="px-6 py-3.5 rounded-full font-semibold tracking-widest uppercase transition-all duration-300 hover:scale-105 text-center"
+                style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff", boxShadow: "0 6px 24px rgba(60,150,80,0.45)", fontSize: "clamp(11px,1.4vw,13px)" }}>
                 Узнать о методе
               </a>
               <a href="#instructors"
-                className="px-8 py-3.5 rounded-full font-medium text-sm tracking-widest uppercase transition-all duration-300 hover:scale-105 text-center"
-                style={{ border: "1px solid rgba(255,255,255,0.35)", color: "#fff", backdropFilter: "blur(8px)", background: "rgba(255,255,255,0.07)" }}>
+                className="px-6 py-3.5 rounded-full font-medium tracking-widest uppercase transition-all duration-300 hover:scale-105 text-center"
+                style={{ border: "1px solid rgba(255,255,255,0.35)", color: "#fff", backdropFilter: "blur(8px)", background: "rgba(255,255,255,0.07)", fontSize: "clamp(11px,1.4vw,13px)" }}>
                 Выбрать инструктора
               </a>
             </div>
 
             {/* Круглые фото инструкторов */}
-            <div style={{ opacity: 1 }}>
+            <div>
               <p className="text-xs mb-3" style={{ color: "rgba(255,255,255,0.35)", fontFamily: "'Montserrat',sans-serif", letterSpacing: "0.08em" }}>
                 ИНСТРУКТОРЫ
               </p>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2">
                 {INSTRUCTORS_MAIN.slice(0, 9).map((ins, i) => (
                   <div key={i} className="flex flex-col items-center gap-1 group cursor-pointer">
                     <div className="rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-110"
-                      style={{ width: 50, height: 50, border: "2px solid rgba(255,255,255,0.3)", boxShadow: "0 3px 12px rgba(0,0,0,0.5)" }}>
+                      style={{ width: 44, height: 44, border: "2px solid rgba(255,255,255,0.3)", boxShadow: "0 3px 12px rgba(0,0,0,0.5)" }}>
                       <img src={ins.img} alt={ins.name}
                         className="w-full h-full object-cover object-top"
-                        onError={e => { (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(ins.name.replace('\n',' '))}&background=1a3a22&color=5cb86e&size=50`; }} />
+                        onError={e => { (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(ins.name.replace('\n',' '))}&background=1a3a22&color=5cb86e&size=44`; }} />
                     </div>
-                    <span className="text-center whitespace-pre-line leading-tight"
-                      style={{ fontSize: "8px", color: "rgba(255,255,255,0.55)", fontFamily: "'Montserrat', sans-serif" }}>
-                      {ins.name}
+                    <span className="text-center leading-tight"
+                      style={{ fontSize: "9px", color: "rgba(255,255,255,0.55)", fontFamily: "'Montserrat', sans-serif", maxWidth: 50, wordBreak: "break-word" }}>
+                      {ins.name.replace('\n', ' ')}
                     </span>
                   </div>
                 ))}

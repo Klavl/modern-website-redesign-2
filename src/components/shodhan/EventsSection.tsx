@@ -163,7 +163,7 @@ export default function EventsSection({ events }: Props) {
                             </div>
                           )}
                         </div>
-                        <span className="text-xs truncate" style={{ color: "rgba(255,255,255,0.5)", maxWidth: 110 }}>
+                        <span className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
                           {ev.instructor_name}
                         </span>
                       </div>

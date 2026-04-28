@@ -2,6 +2,7 @@ import { useState } from "react";
 import Icon from "@/components/ui/icon";
 import FadeIn from "./FadeIn";
 import CityMap from "./CityMap";
+import WhySection from "./WhySection";
 import { DMITRY_PHOTO, ELEMENTS_16, AFTER_MEDITATION, INSTRUCTORS_FULL } from "./shared";
 
 const VIDEO_COVER = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/f20895ca-6d45-426c-acf2-a17a0dffda27.png";
@@ -175,32 +176,26 @@ export default function AboutSection() {
           <FadeIn className="text-center mb-16">
             <h2 className="font-display mb-4"
               style={{ fontFamily: "'Oswald',sans-serif", fontSize: "clamp(32px,5vw,56px)", fontWeight: 700, color: "#fff", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-              ПРАКТИКИ МЕДИТАЦИИ
+              16 СТАДИЙ ПРАКТИКИ
             </h2>
             <div className="w-20 h-1 mx-auto rounded-full" style={{ background: "linear-gradient(90deg,#3a8f4a,#5cb86e)" }} />
           </FadeIn>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
             {ELEMENTS_16.map((el, i) => (
-              <FadeIn key={i} delay={(i % 4) * 0.07}>
-                <div className="rounded-xl p-5 group transition-all duration-300 hover:-translate-y-1"
+              <FadeIn key={i} delay={(i % 4) * 0.07} className="h-full">
+                <div className="rounded-xl p-5 h-full group transition-all duration-300 hover:-translate-y-1 flex gap-3"
                   style={{
                     background: "linear-gradient(145deg,rgba(20,35,25,0.9),rgba(10,18,30,0.85))",
                     border: "1px solid rgba(92,184,110,0.12)",
                   }}
                   onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(92,184,110,0.35)")}
                   onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(92,184,110,0.12)")}>
-                  <div className="flex items-start gap-3 mb-2">
-                    <span className="font-display font-bold text-3xl leading-none"
-                      style={{ fontFamily: "'Oswald',sans-serif", color: "rgba(92,184,110,0.3)", lineHeight: 1 }}>
-                      {el.n}
-                    </span>
-                    <h3 className="font-display font-semibold text-base pt-1"
-                      style={{ fontFamily: "'Oswald',sans-serif", color: "#fff", letterSpacing: "0.05em", textTransform: "uppercase" }}>
-                      {el.title}
-                    </h3>
-                  </div>
-                  <p className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>
+                  <span className="font-display font-bold text-3xl leading-none shrink-0"
+                    style={{ fontFamily: "'Oswald',sans-serif", color: "rgba(92,184,110,0.35)", lineHeight: 1 }}>
+                    {el.n}
+                  </span>
+                  <p className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.7)" }}>
                     {el.desc}
                   </p>
                 </div>
@@ -209,6 +204,9 @@ export default function AboutSection() {
           </div>
         </div>
       </section>
+
+      {/* ══════════ ШОДХАН НУЖЕН ТЕБЕ ══════════ */}
+      <WhySection />
 
       {/* ══════════ ПОСЛЕ МЕДИТАЦИИ ══════════ */}
       <section id="after" className="py-24 px-5 relative overflow-hidden"
@@ -226,15 +224,15 @@ export default function AboutSection() {
             <div className="w-20 h-1 mx-auto rounded-full" style={{ background: "linear-gradient(90deg,#3a8f4a,#5cb86e)" }} />
           </FadeIn>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12 items-stretch">
             {AFTER_MEDITATION.map((item, i) => (
-              <FadeIn key={i} delay={i * 0.06}>
-                <div className="rounded-xl p-5 text-center group transition-all duration-300 hover:-translate-y-1"
+              <FadeIn key={i} delay={i * 0.06} className="h-full">
+                <div className="rounded-xl p-5 text-center h-full group transition-all duration-300 hover:-translate-y-1 flex flex-col items-center"
                   style={{
                     background: "linear-gradient(145deg,rgba(20,45,25,0.85),rgba(10,25,15,0.8))",
                     border: "1px solid rgba(92,184,110,0.15)",
                   }}>
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-3"
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-3 shrink-0"
                     style={{ background: "rgba(92,184,110,0.12)", border: "1px solid rgba(92,184,110,0.25)" }}>
                     <Icon name="Check" size={16} />
                   </div>
@@ -271,13 +269,15 @@ export default function AboutSection() {
             <div className="w-20 h-1 mx-auto rounded-full mt-4" style={{ background: "linear-gradient(90deg,#3a8f4a,#5cb86e)" }} />
           </FadeIn>
 
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8">
             {INSTRUCTORS_FULL.map((ins, i) => (
-              <FadeIn key={i} delay={(i % 6) * 0.06}>
+              <FadeIn key={i} delay={(i % 5) * 0.06}>
                 <div className="flex flex-col items-center group cursor-default">
                   <div className="relative transition-transform duration-300 group-hover:scale-105"
                     style={{
-                      width: 130, height: 130,
+                      width: "100%",
+                      maxWidth: 200,
+                      aspectRatio: "1/1",
                       borderRadius: "50%",
                       border: "2px solid rgba(100,140,255,0.45)",
                       boxShadow: "0 0 0 4px rgba(100,140,255,0.1), 0 8px 24px rgba(0,0,0,0.4)",
@@ -289,7 +289,7 @@ export default function AboutSection() {
                       alt="Инструктор Шодхан"
                       className="w-full h-full object-cover object-top"
                       onError={e => {
-                        (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=ШД&background=1a3a22&color=5cb86e&size=130`;
+                        (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=ШД&background=1a3a22&color=5cb86e&size=200`;
                       }}
                     />
                   </div>
