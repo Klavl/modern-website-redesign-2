@@ -26,10 +26,10 @@ function VideoCard({ url, thumb, index }: { url: string; thumb: string; index: n
 
   return (
     <FadeIn delay={(index % 4) * 0.08}>
+      <div style={{ aspectRatio: "9/16", position: "relative" }}>
       <div
-        className="relative rounded-2xl cursor-pointer group"
+        className="absolute inset-0 rounded-2xl cursor-pointer group"
         style={{
-          aspectRatio: "9/16",
           background: "#0d1520",
           border: "1px solid rgba(255,255,255,0.08)",
           boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
@@ -76,6 +76,7 @@ function VideoCard({ url, thumb, index }: { url: string; thumb: string; index: n
             </div>
           </div>
         )}
+      </div>
       </div>
     </FadeIn>
   );
