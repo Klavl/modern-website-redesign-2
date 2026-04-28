@@ -27,12 +27,13 @@ function VideoCard({ url, thumb, index }: { url: string; thumb: string; index: n
   return (
     <FadeIn delay={(index % 4) * 0.08}>
       <div
-        className="relative rounded-2xl overflow-hidden cursor-pointer group"
+        className="relative rounded-2xl cursor-pointer group"
         style={{
           aspectRatio: "9/16",
           background: "#0d1520",
           border: "1px solid rgba(255,255,255,0.08)",
           boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+          overflow: "hidden",
         }}
       >
         {playing && embedUrl ? (
@@ -45,11 +46,15 @@ function VideoCard({ url, thumb, index }: { url: string; thumb: string; index: n
             style={{ border: "none", display: "block" }}
           />
         ) : (
-          <div className="relative w-full h-full" onClick={() => setPlaying(true)}>
+          <div
+            className="absolute inset-0"
+            onClick={() => setPlaying(true)}
+          >
             <img
               src={thumb}
               alt={`Отзыв ${index + 1}`}
-              className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+              className="w-full h-full object-cover object-center"
+              style={{ display: "block" }}
             />
             <div className="absolute inset-0"
               style={{ background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)" }} />
