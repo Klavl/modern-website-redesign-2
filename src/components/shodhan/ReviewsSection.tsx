@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FadeIn from "./FadeIn";
 
 const VIDEOS = [
@@ -20,7 +20,15 @@ function getEmbedUrl(url: string) {
 
 function VideoCard({ url, index }: { url: string; index: number }) {
   const [playing, setPlaying] = useState(false);
+  const [thumb, setThumb] = useState<string | null>(null);
   const embedUrl = getEmbedUrl(url);
+
+  useEffect(() => {
+    fetch(`https://rutube.ru/api/oembed/?url=${encodeURIComponent(url)}&format=json`)
+      .then(r => r.json())
+      .then(d => { if (d.thumbnail_url) setThumb(d.thumbnail_url); })
+      .catch(() => {});
+  }, [url]);
 
   return (
     <FadeIn delay={(index % 4) * 0.08}>
@@ -43,33 +51,38 @@ function VideoCard({ url, index }: { url: string; index: number }) {
             style={{ border: "none", display: "block" }}
           />
         ) : (
-          <div className="relative w-full h-full flex flex-col items-center justify-center"
-            onClick={() => setPlaying(true)}>
-            <div className="absolute inset-0"
-              style={{ background: "linear-gradient(160deg, rgba(20,35,25,0.9) 0%, rgba(8,15,25,0.95) 100%)" }} />
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 z-10">
+          <div className="relative w-full h-full" onClick={() => setPlaying(true)}>
+            {/* Обложка */}
+            {thumb ? (
+              <img
+                src={thumb}
+                alt={`Отзыв ${index + 1}`}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+            ) : (
+              <div className="w-full h-full"
+                style={{ background: "linear-gradient(160deg, rgba(20,35,25,0.9) 0%, rgba(8,15,25,0.95) 100%)" }} />
+            )}
+            {/* Затемнение */}
+            <div className="absolute inset-0 transition-opacity duration-300"
+              style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.1) 100%)" }} />
+            {/* Кнопка play */}
+            <div className="absolute inset-0 flex items-center justify-center">
               <div
                 className="rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
                 style={{
-                  width: 64, height: 64,
-                  background: "linear-gradient(135deg,#3a8f4a,#5cb86e)",
-                  boxShadow: "0 0 30px rgba(92,184,110,0.4)",
+                  width: 60, height: 60,
+                  background: "rgba(255,255,255,0.15)",
+                  backdropFilter: "blur(8px)",
+                  border: "2px solid rgba(255,255,255,0.5)",
+                  boxShadow: "0 0 30px rgba(92,184,110,0.35)",
                 }}
               >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" style={{ marginLeft: 3 }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" style={{ marginLeft: 3 }}>
                   <polygon points="5,3 19,12 5,21" />
                 </svg>
               </div>
-              <div className="text-center px-4">
-                <p className="text-xs font-semibold uppercase tracking-widest"
-                  style={{ fontFamily: "'Oswald',sans-serif", color: "rgba(255,255,255,0.5)" }}>
-                  Отзыв #{index + 1}
-                </p>
-              </div>
             </div>
-            {/* Зелёный акцент */}
-            <div className="absolute top-3 right-3 w-2 h-2 rounded-full"
-              style={{ background: "#5cb86e", boxShadow: "0 0 8px rgba(92,184,110,0.8)" }} />
           </div>
         )}
       </div>
