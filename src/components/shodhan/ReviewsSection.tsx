@@ -2,7 +2,7 @@ import { useState } from "react";
 import FadeIn from "./FadeIn";
 
 const BASE = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/rutube-thumbs";
-const V = "?v=2";
+const V = "?v=3";
 
 const VIDEOS = [
   { url: "https://rutube.ru/video/d8a7ba60e26cfdbcc6e9eea93d9ad9c7/", thumb: `${BASE}/review_0.jpg${V}` },
