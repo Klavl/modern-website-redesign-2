@@ -3,12 +3,13 @@ import Icon from "@/components/ui/icon";
 import FadeIn from "./FadeIn";
 import CityMap from "./CityMap";
 import WhySection from "./WhySection";
-import { DMITRY_PHOTO, ELEMENTS_16, AFTER_MEDITATION, INSTRUCTORS_FULL } from "./shared";
+import { DMITRY_PHOTO, ELEMENTS_16, AFTER_MEDITATION } from "./shared";
+import type { Instructor } from "@/lib/api";
 
 const VIDEO_COVER = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/f20895ca-6d45-426c-acf2-a17a0dffda27.png";
 const VIDEO_EMBED = "https://rutube.ru/play/embed/ff6fb89cc23dfdd417528a5a76f2b029/";
 
-export default function AboutSection() {
+export default function AboutSection({ instructors = [] }: { instructors?: Instructor[] }) {
   const [playing, setPlaying] = useState(false);
   return (
     <>
@@ -269,37 +270,59 @@ export default function AboutSection() {
             <div className="w-20 h-1 mx-auto rounded-full mt-4" style={{ background: "linear-gradient(90deg,#3a8f4a,#5cb86e)" }} />
           </FadeIn>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8">
-            {INSTRUCTORS_FULL.map((ins, i) => (
-              <FadeIn key={i} delay={(i % 5) * 0.06}>
-                <div className="flex flex-col items-center group cursor-default">
-                  <div className="relative transition-transform duration-300 group-hover:scale-105"
-                    style={{
-                      width: "100%",
-                      maxWidth: 200,
-                      aspectRatio: "1/1",
-                      borderRadius: "50%",
-                      border: "2px solid rgba(100,140,255,0.45)",
-                      boxShadow: "0 0 0 4px rgba(100,140,255,0.1), 0 8px 24px rgba(0,0,0,0.4)",
-                      overflow: "hidden",
-                      background: "#0d1a10",
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {instructors.map((ins, i) => (
+              <FadeIn key={ins.id} delay={(i % 5) * 0.06}>
+                <a href="/instructors" style={{ textDecoration: "none", display: "block" }}>
+                  <div className="group cursor-pointer" style={{
+                    borderRadius: 14,
+                    overflow: "hidden",
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    transition: "transform 0.2s, border-color 0.2s",
+                  }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)";
+                      (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(92,184,110,0.3)";
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
+                      (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(255,255,255,0.08)";
                     }}>
-                    <img
-                      src={ins.img}
-                      alt="Инструктор Шодхан"
-                      className="w-full h-full object-cover object-top"
-                      onError={e => {
-                        (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=ШД&background=1a3a22&color=5cb86e&size=200`;
-                      }}
-                    />
+                    <div style={{ aspectRatio: "1/1", overflow: "hidden", position: "relative", background: "#0d1520" }}>
+                      <img
+                        src={ins.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(ins.full_name)}&background=1a3a22&color=5cb86e&size=300`}
+                        alt={ins.full_name}
+                        className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+                        onError={e => {
+                          (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(ins.full_name)}&background=1a3a22&color=5cb86e&size=300`;
+                        }}
+                      />
+                      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%)" }} />
+                      {ins.city && (
+                        <div style={{ position: "absolute", bottom: 7, left: 8, right: 8, display: "flex", alignItems: "center", gap: 3 }}>
+                          <Icon name="MapPin" size={10} style={{ color: "#5cb86e", flexShrink: 0 }} />
+                          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.85)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ins.city}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ padding: "10px 12px 12px" }}>
+                      <p style={{ fontSize: 12, fontWeight: 600, color: "#fff", margin: "0 0 5px", lineHeight: 1.3 }}>{ins.full_name}</p>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                        {ins.gender && (
+                          <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 20, background: "rgba(92,184,110,0.12)", border: "1px solid rgba(92,184,110,0.2)", color: "#5cb86e" }}>
+                            {ins.gender === "M" ? "М" : "Ж"}
+                          </span>
+                        )}
+                        {ins.experience_years && (
+                          <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 20, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.55)" }}>
+                            {ins.experience_years} л.
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  {i === 0 && (
-                    <span className="mt-2 text-xs font-medium text-center"
-                      style={{ color: "#5cb86e", fontFamily: "'Montserrat',sans-serif" }}>
-                      Основатель
-                    </span>
-                  )}
-                </div>
+                </a>
               </FadeIn>
             ))}
           </div>
