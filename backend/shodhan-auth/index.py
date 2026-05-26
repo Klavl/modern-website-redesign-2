@@ -279,6 +279,7 @@ def handler(event: dict, context) -> dict:
         if target_id == row[0]:
             conn.close()
             return err("Нельзя удалить себя")
+        cur.execute("DELETE FROM shodhan_events WHERE instructor_id = %s", (target_id,))
         cur.execute("DELETE FROM shodhan_instructors WHERE id = %s AND role != 'admin'", (target_id,))
         conn.commit()
         conn.close()
