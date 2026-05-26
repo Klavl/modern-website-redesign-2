@@ -1,6 +1,13 @@
 {
   "tests": [
     {
+      "name": "OPTIONS CORS",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200,
+      "bodyMatcher": "partial"
+    },
+    {
       "name": "Login with wrong credentials",
       "method": "POST",
       "path": "/",
@@ -9,9 +16,10 @@
       "bodyMatcher": "partial"
     },
     {
-      "name": "OPTIONS CORS",
-      "method": "OPTIONS",
+      "name": "Public instructors list",
+      "method": "POST",
       "path": "/",
+      "body": {"action": "public_instructors"},
       "expectedStatus": 200,
       "bodyMatcher": "partial"
     }

@@ -304,7 +304,13 @@ export default function AboutSection() {
             ))}
           </div>
 
-          <FadeIn className="text-center mt-12">
+          <FadeIn className="text-center mt-12 flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/instructors"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-sm tracking-widest uppercase transition-all duration-300 hover:scale-105"
+              style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff", boxShadow: "0 6px 24px rgba(60,150,80,0.35)" }}>
+              <Icon name="Users" size={16} />
+              Показать всех
+            </a>
             <a href="#contact"
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-sm tracking-widest uppercase transition-all duration-300 hover:scale-105"
               style={{ border: "1px solid rgba(92,184,110,0.4)", color: "#5cb86e", background: "rgba(92,184,110,0.05)" }}>

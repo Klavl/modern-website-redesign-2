@@ -1,12 +1,15 @@
 """
 Авторизация инструкторов Шодхан.
-action=login         — вход по логину+паролю
-action=me            — получить профиль (X-Session-Token)
-action=logout        — выход
-action=update        — обновить профиль (bio, city, photo_url)
-action=admin_list    — список инструкторов (только admin)
-action=admin_create  — создать инструктора (только admin)
-action=admin_delete  — удалить инструктора (только admin)
+action=login              — вход по логину+паролю
+action=me                 — получить профиль (X-Session-Token)
+action=logout             — выход
+action=update             — обновить профиль (bio, city, photo_url)
+action=public_instructors — публичный список инструкторов
+action=admin_list         — список инструкторов (только admin)
+action=admin_create       — создать инструктора (только admin)
+action=admin_update       — обновить данные инструктора (только admin)
+action=admin_delete       — удалить инструктора (только admin)
+action=admin_set_credentials — сменить логин/пароль (только admin)
 """
 
 import json
@@ -150,6 +153,26 @@ def handler(event: dict, context) -> dict:
         conn.close()
         return ok({"success": True})
 
+    # ── PUBLIC: LIST INSTRUCTORS ───────────────────────────────────────────────
+    if action == "public_instructors":
+        cur.execute(
+            """SELECT id, full_name, city, bio, photo_url, gender, age, experience_years, telegram, vk
+               FROM shodhan_instructors
+               WHERE role = 'instructor'
+               ORDER BY full_name"""
+        )
+        rows = cur.fetchall()
+        conn.close()
+        return ok({"instructors": [
+            {
+                "id": r[0], "full_name": r[1], "city": r[2] or "",
+                "bio": r[3] or "", "photo_url": r[4] or "",
+                "gender": r[5] or "", "age": r[6],
+                "experience_years": r[7], "telegram": r[8] or "", "vk": r[9] or ""
+            }
+            for r in rows
+        ]})
+
     # ── ADMIN: LIST ───────────────────────────────────────────────────────────
     if action == "admin_list":
         row, error = require_admin(cur, token)
@@ -157,12 +180,20 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return error
         cur.execute(
-            "SELECT id, full_name, login, city, role, created_at FROM shodhan_instructors ORDER BY created_at"
+            """SELECT id, full_name, login, city, role, created_at,
+                      gender, age, experience_years, telegram, vk, photo_url, bio
+               FROM shodhan_instructors ORDER BY created_at"""
         )
         rows = cur.fetchall()
         conn.close()
         return ok({"instructors": [
-            {"id": r[0], "full_name": r[1], "login": r[2], "city": r[3], "role": r[4], "created_at": str(r[5])}
+            {
+                "id": r[0], "full_name": r[1], "login": r[2], "city": r[3] or "",
+                "role": r[4], "created_at": str(r[5]),
+                "gender": r[6] or "", "age": r[7], "experience_years": r[8],
+                "telegram": r[9] or "", "vk": r[10] or "",
+                "photo_url": r[11] or "", "bio": r[12] or ""
+            }
             for r in rows
         ]})
 
@@ -177,6 +208,11 @@ def handler(event: dict, context) -> dict:
         password = (body.get("password") or "").strip()
         full_name = (body.get("full_name") or "").strip()
         city = (body.get("city") or "").strip()
+        gender = (body.get("gender") or "").strip() or None
+        age = body.get("age") or None
+        experience_years = body.get("experience_years") or None
+        telegram = (body.get("telegram") or "").strip() or None
+        vk = (body.get("vk") or "").strip() or None
 
         if not login_val or not password or not full_name:
             conn.close()
@@ -188,16 +224,47 @@ def handler(event: dict, context) -> dict:
             return err("Инструктор с таким логином уже существует")
 
         pw_hash = hash_password(password)
-        # phone уникален и NOT NULL — используем логин как заполнитель
-        phone_placeholder = f"login:{login_val}"
+        phone_placeholder = "login:" + login_val
         cur.execute(
-            "INSERT INTO shodhan_instructors (full_name, phone, city, login, password_hash, role) VALUES (%s, %s, %s, %s, %s, 'instructor') RETURNING id",
-            (full_name, phone_placeholder, city, login_val, pw_hash),
+            """INSERT INTO shodhan_instructors
+               (full_name, phone, city, login, password_hash, role, gender, age, experience_years, telegram, vk)
+               VALUES (%s, %s, %s, %s, %s, 'instructor', %s, %s, %s, %s, %s) RETURNING id""",
+            (full_name, phone_placeholder, city, login_val, pw_hash, gender, age, experience_years, telegram, vk),
         )
         new_id = cur.fetchone()[0]
         conn.commit()
         conn.close()
         return ok({"success": True, "id": new_id})
+
+    # ── ADMIN: UPDATE INSTRUCTOR ───────────────────────────────────────────────
+    if action == "admin_update":
+        row, error = require_admin(cur, token)
+        if error:
+            conn.close()
+            return error
+        target_id = body.get("id")
+        if not target_id:
+            conn.close()
+            return err("Не указан id")
+        full_name = (body.get("full_name") or "").strip()
+        city = (body.get("city") or "").strip()
+        gender = (body.get("gender") or "").strip() or None
+        age = body.get("age") or None
+        experience_years = body.get("experience_years") or None
+        telegram = (body.get("telegram") or "").strip() or None
+        vk = (body.get("vk") or "").strip() or None
+        bio = (body.get("bio") or "").strip()
+        photo_url = (body.get("photo_url") or "").strip()
+        cur.execute(
+            """UPDATE shodhan_instructors
+               SET full_name=%s, city=%s, gender=%s, age=%s, experience_years=%s,
+                   telegram=%s, vk=%s, bio=%s, photo_url=%s
+               WHERE id=%s""",
+            (full_name, city, gender, age, experience_years, telegram, vk, bio, photo_url, target_id),
+        )
+        conn.commit()
+        conn.close()
+        return ok({"success": True})
 
     # ── ADMIN: DELETE ─────────────────────────────────────────────────────────
     if action == "admin_delete":
@@ -209,7 +276,6 @@ def handler(event: dict, context) -> dict:
         if not target_id:
             conn.close()
             return err("Не указан id")
-        # Нельзя удалить себя
         if target_id == row[0]:
             conn.close()
             return err("Нельзя удалить себя")
@@ -235,9 +301,9 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return err("Такой логин уже занят")
         pw_hash = hash_password(password)
-        phone_placeholder = f"login:{login_val}"
+        phone_placeholder = "login:" + login_val
         cur.execute(
-            "UPDATE shodhan_instructors SET login = %s, password_hash = %s, phone = %s WHERE id = %s AND role != 'admin'",
+            "UPDATE shodhan_instructors SET login=%s, password_hash=%s, phone=%s WHERE id=%s",
             (login_val, pw_hash, phone_placeholder, target_id),
         )
         conn.commit()
@@ -245,4 +311,4 @@ def handler(event: dict, context) -> dict:
         return ok({"success": True})
 
     conn.close()
-    return err("Неизвестное действие", 400)
+    return err("Неизвестный action")

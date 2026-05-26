@@ -11,6 +11,13 @@ export type Instructor = {
   bio: string;
   photo_url: string;
   role?: string;
+  gender?: string;
+  age?: number | null;
+  experience_years?: number | null;
+  telegram?: string;
+  vk?: string;
+  login?: string;
+  created_at?: string;
 };
 
 export type ShodhanEvent = {
@@ -73,6 +80,16 @@ export async function adminDeleteInstructor(id: number) {
 export async function adminSetCredentials(id: number, login: string, password: string) {
   const token = getToken();
   return callAuth({ action: "admin_set_credentials", id, login, password }, token || undefined);
+}
+
+export async function adminUpdateInstructor(id: number, data: Partial<Instructor>) {
+  const token = getToken();
+  return callAuth({ action: "admin_update", id, ...data }, token || undefined);
+}
+
+export async function getPublicInstructors(): Promise<Instructor[]> {
+  const data = await callAuth({ action: "public_instructors" });
+  return data.instructors || [];
 }
 
 export async function logout() {
