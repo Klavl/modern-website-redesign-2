@@ -3,13 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { getPublicInstructors, type Instructor } from "@/lib/api";
 import Icon from "@/components/ui/icon";
 
-const GENDER_LABEL: Record<string, string> = { M: "Мужской", F: "Женский" };
-
-function genderLabel(g?: string) {
-  if (!g) return "—";
-  return GENDER_LABEL[g] || g;
-}
-
 function expLabel(y?: number | null) {
   if (!y) return "—";
   if (y === 1) return "1 год";
@@ -258,11 +251,4 @@ function InstructorCard({ ins, index }: { ins: Instructor; index: number }) {
       </div>
     </div>
   );
-}
-
-function expLabel(y?: number | null) {
-  if (!y) return "—";
-  if (y === 1) return "1 год";
-  if (y < 5) return `${y} года`;
-  return `${y} лет`;
 }
