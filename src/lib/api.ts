@@ -32,6 +32,7 @@ export type ShodhanEvent = {
   spots: number;
   contact_link: string;
   is_active?: boolean;
+  is_mass?: boolean;
   instructor_name?: string;
   instructor_photo?: string;
   instructor_id?: number;

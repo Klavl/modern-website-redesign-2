@@ -72,7 +72,7 @@ def handler(event: dict, context) -> dict:
         cur.execute("""
             SELECT e.id, e.title, e.description, e.event_date, e.event_time,
                    e.location, e.city, e.price, e.spots, e.contact_link,
-                   i.full_name, i.photo_url, i.id
+                   i.full_name, i.photo_url, i.id, e.is_mass
             FROM shodhan_events e
             JOIN shodhan_instructors i ON i.id = e.instructor_id
             WHERE e.is_active = TRUE AND e.event_date >= CURRENT_DATE
@@ -87,7 +87,7 @@ def handler(event: dict, context) -> dict:
                 "location": r[5], "city": r[6], "price": r[7],
                 "spots": r[8], "contact_link": r[9],
                 "instructor_name": r[10], "instructor_photo": r[11],
-                "instructor_id": r[12],
+                "instructor_id": r[12], "is_mass": r[13],
             }
             for r in rows
         ]
@@ -103,7 +103,7 @@ def handler(event: dict, context) -> dict:
         inst_id = inst[0]
         cur.execute("""
             SELECT id, title, description, event_date, event_time,
-                   location, city, price, spots, contact_link, is_active
+                   location, city, price, spots, contact_link, is_active, is_mass
             FROM shodhan_events
             WHERE instructor_id = %s
             ORDER BY event_date DESC
@@ -115,6 +115,7 @@ def handler(event: dict, context) -> dict:
                 "event_date": str(r[3]), "event_time": r[4],
                 "location": r[5], "city": r[6], "price": r[7],
                 "spots": r[8], "contact_link": r[9], "is_active": r[10],
+                "is_mass": r[11],
             }
             for r in rows
         ]
@@ -129,28 +130,29 @@ def handler(event: dict, context) -> dict:
             return err("Требуется авторизация", 401)
         inst_id, inst_name, inst_city = inst
 
-        title = (body.get("title") or "").strip()
         event_date = (body.get("event_date") or "").strip()
         event_time = (body.get("event_time") or "").strip()
         location = (body.get("location") or "").strip()
         city = (body.get("city") or inst_city).strip()
+        is_mass = bool(body.get("is_mass", False))
 
-        if not title or not event_date or not event_time or not location:
+        if not event_date or not event_time or not location:
             conn.close()
-            return err("Заполните название, дату, время и место")
+            return err("Заполните дату, время и место")
 
         cur.execute("""
             INSERT INTO shodhan_events
-              (instructor_id, title, description, event_date, event_time, location, city, price, spots, contact_link)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+              (instructor_id, title, description, event_date, event_time, location, city, price, spots, contact_link, is_mass)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """, (
-            inst_id, title,
+            inst_id, "ШОДХАН",
             body.get("description", ""),
             event_date, event_time, location, city,
             body.get("price", "Бесплатно"),
             int(body.get("spots") or 0),
             body.get("contact_link", ""),
+            is_mass,
         ))
         new_id = cur.fetchone()[0]
         conn.commit()
@@ -174,25 +176,27 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return err("Мероприятие не найдено", 404)
 
-        title = (body.get("title") or "").strip()
         event_date = (body.get("event_date") or "").strip()
         event_time = (body.get("event_time") or "").strip()
         location = (body.get("location") or "").strip()
+        is_mass = bool(body.get("is_mass", False))
 
-        if not title or not event_date or not event_time or not location:
+        if not event_date or not event_time or not location:
             conn.close()
             return err("Заполните все обязательные поля")
 
         cur.execute("""
             UPDATE shodhan_events SET
-              title = %s, description = %s, event_date = %s, event_time = %s,
-              location = %s, city = %s, price = %s, spots = %s, contact_link = %s
+              title = 'ШОДХАН', description = %s, event_date = %s, event_time = %s,
+              location = %s, city = %s, price = %s, spots = %s, contact_link = %s,
+              is_mass = %s
             WHERE id = %s AND instructor_id = %s
         """, (
-            title, body.get("description", ""),
+            body.get("description", ""),
             event_date, event_time, location,
             body.get("city", ""), body.get("price", "Бесплатно"),
             int(body.get("spots") or 0), body.get("contact_link", ""),
+            is_mass,
             event_id, inst_id,
         ))
         conn.commit()

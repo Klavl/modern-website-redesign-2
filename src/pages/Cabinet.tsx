@@ -8,7 +8,6 @@ import {
 import Icon from "@/components/ui/icon";
 
 type EventForm = {
-  title: string;
   description: string;
   event_date: string;
   event_time: string;
@@ -17,11 +16,12 @@ type EventForm = {
   price: string;
   spots: number;
   contact_link: string;
+  is_mass: boolean;
 };
 
 const emptyForm = (): EventForm => ({
-  title: "", description: "", event_date: "", event_time: "",
-  location: "", city: "", price: "Бесплатно", spots: 0, contact_link: "",
+  description: "", event_date: "", event_time: "",
+  location: "", city: "", price: "Бесплатно", spots: 0, contact_link: "", is_mass: false,
 });
 
 const MONTH_RU = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
@@ -67,10 +67,11 @@ export default function Cabinet() {
   const openEdit = (ev: ShodhanEvent) => {
     setEditId(ev.id);
     setForm({
-      title: ev.title, description: ev.description,
+      description: ev.description,
       event_date: ev.event_date, event_time: ev.event_time,
       location: ev.location, city: ev.city, price: ev.price,
       spots: ev.spots, contact_link: ev.contact_link,
+      is_mass: ev.is_mass ?? false,
     });
     setFormError("");
     setShowForm(true);
@@ -317,8 +318,14 @@ export default function Cabinet() {
             </div>
 
             <form onSubmit={handleSave} className="p-6 space-y-4">
+              {/* Фиксированное название */}
+              <div className="rounded-xl px-4 py-3 flex items-center gap-2"
+                style={{ background: "rgba(92,184,110,0.08)", border: "1px solid rgba(92,184,110,0.2)" }}>
+                <Icon name="Tag" size={14} style={{ color: "#5cb86e" }} />
+                <span className="text-sm font-bold tracking-widest" style={{ color: "#5cb86e", fontFamily: "'Oswald',sans-serif" }}>ШОДХАН</span>
+                <span className="text-xs ml-1" style={{ color: "rgba(255,255,255,0.4)" }}>— название всех мероприятий</span>
+              </div>
               {[
-                { key: "title", label: "Название *", placeholder: "Медитация первоэлементов", type: "text", required: true },
                 { key: "event_date", label: "Дата *", placeholder: "", type: "date", required: true },
                 { key: "event_time", label: "Время *", placeholder: "18:00", type: "time", required: true },
                 { key: "location", label: "Место проведения *", placeholder: "Студия Yoga Space, ул. Ленина, 5", type: "text", required: true },
@@ -362,6 +369,20 @@ export default function Cabinet() {
                   onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
                 />
               </div>
+
+              {/* Чекбокс Массовый */}
+              <label className="flex items-center gap-3 cursor-pointer select-none rounded-xl px-4 py-3 transition-colors duration-150"
+                style={{ background: form.is_mass ? "rgba(92,184,110,0.1)" : "rgba(255,255,255,0.04)", border: `1px solid ${form.is_mass ? "rgba(92,184,110,0.35)" : "rgba(255,255,255,0.08)"}` }}>
+                <div onClick={() => setForm(prev => ({ ...prev, is_mass: !prev.is_mass }))}
+                  className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition-all duration-150"
+                  style={{ background: form.is_mass ? "#5cb86e" : "rgba(255,255,255,0.1)", border: `1.5px solid ${form.is_mass ? "#5cb86e" : "rgba(255,255,255,0.2)"}`, cursor: "pointer" }}>
+                  {form.is_mass && <Icon name="Check" size={12} style={{ color: "#fff" }} />}
+                </div>
+                <div>
+                  <p className="text-sm font-semibold" style={{ color: "#fff" }}>Массовый Шодхан</p>
+                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>Отметьте, если это массовое мероприятие</p>
+                </div>
+              </label>
 
               {formError && (
                 <div className="rounded-xl px-4 py-3 text-sm flex items-center gap-2"
