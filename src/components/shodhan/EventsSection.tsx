@@ -93,9 +93,11 @@ export default function EventsSection({ events }: Props) {
                 <FadeIn key={ev.id} delay={(i % 3) * 0.08} className="h-full">
                   <div className="rounded-2xl overflow-hidden flex flex-col h-full group transition-all duration-300 hover:-translate-y-1"
                     style={{
-                      background: "linear-gradient(145deg,rgba(15,30,20,0.95),rgba(8,15,25,0.9))",
-                      border: "1px solid rgba(92,184,110,0.14)",
-                      boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+                      background: ev.is_mass
+                        ? "linear-gradient(145deg,rgba(30,22,5,0.97),rgba(8,15,25,0.9))"
+                        : "linear-gradient(145deg,rgba(15,30,20,0.95),rgba(8,15,25,0.9))",
+                      border: ev.is_mass ? "1px solid rgba(232,160,32,0.4)" : "1px solid rgba(92,184,110,0.14)",
+                      boxShadow: ev.is_mass ? "0 4px 24px rgba(232,160,32,0.12)" : "0 4px 20px rgba(0,0,0,0.3)",
                     }}>
                     {/* Дата и время */}
                     <div className="px-5 pt-5 pb-4 flex items-start justify-between"
@@ -109,11 +111,18 @@ export default function EventsSection({ events }: Props) {
                           {MONTH_RU[new Date(ev.event_date).getMonth()]} {new Date(ev.event_date).getFullYear()}
                         </div>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right flex flex-col items-end gap-1.5">
+                        {ev.is_mass && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold tracking-wider uppercase"
+                            style={{ background: "linear-gradient(135deg,#e8a020,#f5c842)", color: "#1a0f00", fontFamily: "'Oswald',sans-serif", letterSpacing: "0.08em" }}>
+                            <Icon name="Star" size={9} />
+                            Массовый
+                          </span>
+                        )}
                         <div className="text-sm font-semibold" style={{ fontFamily: "'Oswald',sans-serif", color: "#fff" }}>
                           {ev.event_time}
                         </div>
-                        <div className="text-xs mt-0.5" style={{ color: ev.price === "Бесплатно" ? "#5cb86e" : "rgba(255,255,255,0.7)" }}>
+                        <div className="text-xs" style={{ color: ev.price === "Бесплатно" ? "#5cb86e" : "rgba(255,255,255,0.7)" }}>
                           {ev.price}
                         </div>
                       </div>
