@@ -220,15 +220,7 @@ export default function Admin() {
     finally { setEditSaving(false); }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#060c14" }}>
-        <Icon name="Loader2" size={32} className="animate-spin" style={{ color: "#5cb86e" }} />
-      </div>
-    );
-  }
-
-  const onlyInstructors = instructors.filter(i => i.role === "instructor");
+  const onlyInstructors = useMemo(() => instructors.filter(i => i.role === "instructor"), [instructors]);
 
   const cityOptions = useMemo(() => {
     const set = new Set<string>();
@@ -247,6 +239,14 @@ export default function Admin() {
   }, [onlyInstructors, search, filterCity, filterGender]);
 
   const hasActiveFilters = search || filterCity || filterGender;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#060c14" }}>
+        <Icon name="Loader2" size={32} className="animate-spin" style={{ color: "#5cb86e" }} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen px-4 py-8"
