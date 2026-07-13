@@ -137,12 +137,17 @@ export default function Admin() {
   const setEdit = (k: string, v: string) => setEditForm(prev => ({ ...prev, [k]: v }));
 
   const loadData = async () => {
-    const me = await getMe();
-    if (!me || me.role !== "admin") { navigate("/login"); return; }
-    const res = await adminListInstructors();
-    if (res.error) { setError("Ошибка загрузки: " + res.error); setLoading(false); return; }
-    setInstructors(res.instructors || []);
-    setLoading(false);
+    try {
+      const me = await getMe();
+      if (!me || me.role !== "admin") { navigate("/login"); return; }
+      const res = await adminListInstructors();
+      if (res.error) { setError("Ошибка загрузки: " + res.error); setLoading(false); return; }
+      setInstructors(res.instructors || []);
+      setLoading(false);
+    } catch {
+      setError("Не удалось соединиться с сервером. Проверьте интернет и обновите страницу");
+      setLoading(false);
+    }
   };
 
   useEffect(() => { loadData(); }, []);
@@ -175,10 +180,14 @@ export default function Admin() {
   };
 
   const handleDelete = async (id: number) => {
-    const res = await adminDeleteInstructor(id);
-    if (res.error) { setError(res.error); return; }
-    setDeleteId(null);
-    loadData();
+    setError(""); setSuccess("");
+    try {
+      const res = await adminDeleteInstructor(id);
+      if (res.error) { setError(res.error); return; }
+      setSuccess("Инструктор удалён");
+      setDeleteId(null);
+      loadData();
+    } catch { setError("Ошибка соединения. Попробуйте ещё раз"); }
   };
 
   const handleSetCreds = async (e: React.FormEvent) => {
