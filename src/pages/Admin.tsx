@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMe, logout, adminListInstructors, adminCreateInstructor, adminDeleteInstructor, adminSetCredentials, adminUpdateInstructor, type Instructor } from "@/lib/api";
 import Icon from "@/components/ui/icon";
@@ -128,6 +128,9 @@ export default function Admin() {
   const [editId, setEditId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState(emptyEditForm());
   const [editSaving, setEditSaving] = useState(false);
+  const [search, setSearch] = useState("");
+  const [filterCity, setFilterCity] = useState("");
+  const [filterGender, setFilterGender] = useState("");
 
   const set = (k: string, v: string) => setForm(prev => ({ ...prev, [k]: v }));
   const setCreds = (k: string, v: string) => setCredsForm(prev => ({ ...prev, [k]: v }));
@@ -227,6 +230,24 @@ export default function Admin() {
 
   const onlyInstructors = instructors.filter(i => i.role === "instructor");
 
+  const cityOptions = useMemo(() => {
+    const set = new Set<string>();
+    onlyInstructors.forEach(i => (i.cities || []).forEach(c => c && set.add(c)));
+    return Array.from(set).sort((a, b) => a.localeCompare(b, "ru"));
+  }, [onlyInstructors]);
+
+  const filteredInstructors = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return onlyInstructors.filter(ins => {
+      if (q && !ins.full_name.toLowerCase().includes(q) && !(ins.login || "").toLowerCase().includes(q)) return false;
+      if (filterCity && !(ins.cities || []).includes(filterCity)) return false;
+      if (filterGender && ins.gender !== filterGender) return false;
+      return true;
+    });
+  }, [onlyInstructors, search, filterCity, filterGender]);
+
+  const hasActiveFilters = search || filterCity || filterGender;
+
   return (
     <div className="min-h-screen px-4 py-8"
       style={{ background: "linear-gradient(135deg,#060c14 0%,#0a1a0f 100%)", fontFamily: "'Montserrat',sans-serif" }}>
@@ -267,7 +288,7 @@ export default function Admin() {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-sm font-semibold uppercase tracking-widest"
             style={{ color: "rgba(255,255,255,0.5)", fontFamily: "'Oswald',sans-serif" }}>
-            Инструкторы ({onlyInstructors.length})
+            Инструкторы ({filteredInstructors.length}{hasActiveFilters ? ` из ${onlyInstructors.length}` : ""})
           </h2>
           <button onClick={() => { setShowForm(!showForm); setCredsId(null); setEditId(null); setError(""); setSuccess(""); }}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wide transition-all hover:opacity-90"
@@ -275,6 +296,54 @@ export default function Admin() {
             <Icon name={showForm ? "X" : "Plus"} size={14} />
             {showForm ? "Отмена" : "Новый инструктор"}
           </button>
+        </div>
+
+        {/* Search & Filters */}
+        <div className="rounded-2xl p-4 mb-4"
+          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <div className="flex flex-wrap gap-3 items-end">
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-xs font-semibold tracking-widest uppercase mb-2"
+                style={{ color: "rgba(92,184,110,0.8)", fontFamily: "'Oswald',sans-serif" }}>Поиск</label>
+              <div className="relative">
+                <Icon name="Search" size={14} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "rgba(255,255,255,0.35)" }} />
+                <input type="text" placeholder="Имя или логин..." value={search} onChange={e => setSearch(e.target.value)}
+                  className="w-full rounded-xl pl-9 pr-4 py-3 text-sm outline-none"
+                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }}
+                  onFocus={e => (e.currentTarget.style.borderColor = "rgba(92,184,110,0.5)")}
+                  onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")} />
+              </div>
+            </div>
+            <div style={{ minWidth: 160 }}>
+              <label className="block text-xs font-semibold tracking-widest uppercase mb-2"
+                style={{ color: "rgba(92,184,110,0.8)", fontFamily: "'Oswald',sans-serif" }}>Город</label>
+              <select value={filterCity} onChange={e => setFilterCity(e.target.value)}
+                className="w-full rounded-xl px-4 py-3 text-sm outline-none"
+                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: filterCity ? "#fff" : "rgba(255,255,255,0.4)" }}>
+                <option value="" style={{ background: "#0d1520" }}>Все города</option>
+                {cityOptions.map(c => <option key={c} value={c} style={{ background: "#0d1520" }}>{c}</option>)}
+              </select>
+            </div>
+            <div style={{ minWidth: 130 }}>
+              <label className="block text-xs font-semibold tracking-widest uppercase mb-2"
+                style={{ color: "rgba(92,184,110,0.8)", fontFamily: "'Oswald',sans-serif" }}>Пол</label>
+              <select value={filterGender} onChange={e => setFilterGender(e.target.value)}
+                className="w-full rounded-xl px-4 py-3 text-sm outline-none"
+                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: filterGender ? "#fff" : "rgba(255,255,255,0.4)" }}>
+                <option value="" style={{ background: "#0d1520" }}>Любой</option>
+                <option value="M" style={{ background: "#0d1520" }}>Мужской</option>
+                <option value="F" style={{ background: "#0d1520" }}>Женский</option>
+              </select>
+            </div>
+            {hasActiveFilters && (
+              <button onClick={() => { setSearch(""); setFilterCity(""); setFilterGender(""); }}
+                className="flex items-center gap-1.5 px-4 py-3 rounded-xl text-xs transition-all hover:opacity-80"
+                style={{ background: "rgba(200,80,80,0.12)", border: "1px solid rgba(200,80,80,0.25)", color: "#ff8080", whiteSpace: "nowrap" }}>
+                <Icon name="X" size={13} />
+                Сбросить
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Create form */}
@@ -399,8 +468,10 @@ export default function Admin() {
 
           {onlyInstructors.length === 0 ? (
             <div className="px-5 py-10 text-center text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>Нет инструкторов</div>
+          ) : filteredInstructors.length === 0 ? (
+            <div className="px-5 py-10 text-center text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>Ничего не найдено по заданным фильтрам</div>
           ) : (
-            onlyInstructors.map(ins => (
+            filteredInstructors.map(ins => (
               <div key={ins.id} style={{
                 display: "grid",
                 gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr 1fr 1fr auto",
