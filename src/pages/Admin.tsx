@@ -384,51 +384,6 @@ export default function Admin() {
           </div>
         )}
 
-        {/* Edit form */}
-        {editId !== null && (
-          <div className="mb-6 rounded-2xl p-6"
-            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(92,184,110,0.25)" }}>
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="text-sm font-bold uppercase tracking-widest"
-                style={{ fontFamily: "'Oswald',sans-serif", color: "#5cb86e" }}>
-                Редактировать — {instructors.find(i => i.id === editId)?.full_name}
-              </h3>
-              <button onClick={() => setEditId(null)} className="p-1 opacity-50 hover:opacity-100" style={{ color: "#fff" }}>
-                <Icon name="X" size={16} />
-              </button>
-            </div>
-            <form onSubmit={handleEdit} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <Field label="ФИО" value={editForm.full_name} onChange={v => setEdit("full_name", v)} />
-              <CitiesInput value={editForm.cities} onChange={v => setEditForm(prev => ({ ...prev, cities: v }))} />
-              <GenderSelect value={editForm.gender} onChange={v => setEdit("gender", v)} />
-              <Field label="Возраст" type="number" value={editForm.age} onChange={v => setEdit("age", v)} />
-              <Field label="Стаж (лет)" type="number" value={editForm.experience_years} onChange={v => setEdit("experience_years", v)} />
-              <Field label="Telegram" placeholder="@username" value={editForm.telegram} onChange={v => setEdit("telegram", v)} />
-              <Field label="ВКонтакте" placeholder="@id или ссылка" value={editForm.vk} onChange={v => setEdit("vk", v)} />
-              <Field label="Ссылка на фото" placeholder="https://..." value={editForm.photo_url} onChange={v => setEdit("photo_url", v)} />
-              <div className="sm:col-span-2 lg:col-span-1">
-                <label className="block text-xs font-semibold tracking-widest uppercase mb-2"
-                  style={{ color: "rgba(92,184,110,0.8)", fontFamily: "'Oswald',sans-serif" }}>О себе</label>
-                <textarea value={editForm.bio} onChange={e => setEdit("bio", e.target.value)} rows={3} placeholder="Краткое описание..."
-                  className="w-full rounded-xl px-4 py-3 text-sm outline-none resize-none"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }} />
-              </div>
-              <div className="sm:col-span-2 lg:col-span-3 flex gap-3">
-                <button type="submit" disabled={editSaving}
-                  className="px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-all hover:opacity-90 disabled:opacity-50"
-                  style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff" }}>
-                  {editSaving ? "Сохраняю..." : "Сохранить изменения"}
-                </button>
-                <button type="button" onClick={() => setEditId(null)}
-                  className="px-6 py-3 rounded-xl text-sm transition-all hover:opacity-80"
-                  style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}>
-                  Отмена
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
         {/* Set credentials form */}
         {credsId !== null && (
           <div className="mb-6 rounded-2xl p-6"
@@ -481,12 +436,13 @@ export default function Admin() {
             <div className="px-5 py-10 text-center text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>Ничего не найдено по заданным фильтрам</div>
           ) : (
             filteredInstructors.map(ins => (
-              <div key={ins.id} style={{
+              <div key={ins.id}>
+              <div style={{
                 display: "grid",
                 gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr 1fr 1fr auto",
                 gap: 0,
                 alignItems: "center",
-                borderBottom: "1px solid rgba(255,255,255,0.04)",
+                borderBottom: editId === ins.id ? "none" : "1px solid rgba(255,255,255,0.04)",
                 padding: "12px 16px",
                 minWidth: 820,
               }}>
@@ -518,8 +474,10 @@ export default function Admin() {
                     : <span style={{ color: "rgba(255,255,255,0.25)" }}>—</span>}
                 </span>
                 <div className="flex items-center gap-1">
-                  <button onClick={() => openEdit(ins)} title="Редактировать" className="p-1.5 rounded-lg transition-all hover:opacity-80" style={{ color: "#5cb86e" }}>
-                    <Icon name="Pencil" size={14} />
+                  <button onClick={() => (editId === ins.id ? setEditId(null) : openEdit(ins))}
+                    title="Редактировать" className="p-1.5 rounded-lg transition-all hover:opacity-80"
+                    style={{ color: editId === ins.id ? "#fff" : "#5cb86e", background: editId === ins.id ? "rgba(92,184,110,0.25)" : "transparent" }}>
+                    <Icon name={editId === ins.id ? "X" : "Pencil"} size={14} />
                   </button>
                   <button onClick={() => { setCredsId(ins.id); setCredsForm(emptyCredsForm()); setShowForm(false); setEditId(null); setError(""); setSuccess(""); }}
                     title="Логин / пароль" className="p-1.5 rounded-lg transition-all hover:opacity-80" style={{ color: "#c9a84c" }}>
@@ -540,6 +498,46 @@ export default function Admin() {
                     </button>
                   )}
                 </div>
+              </div>
+
+              {editId === ins.id && (
+                <div style={{
+                  padding: "18px 16px 22px",
+                  background: "rgba(92,184,110,0.05)",
+                  borderBottom: "1px solid rgba(255,255,255,0.04)",
+                  minWidth: 820,
+                }}>
+                  <form onSubmit={handleEdit} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <Field label="ФИО" value={editForm.full_name} onChange={v => setEdit("full_name", v)} />
+                    <CitiesInput value={editForm.cities} onChange={v => setEditForm(prev => ({ ...prev, cities: v }))} />
+                    <GenderSelect value={editForm.gender} onChange={v => setEdit("gender", v)} />
+                    <Field label="Возраст" type="number" value={editForm.age} onChange={v => setEdit("age", v)} />
+                    <Field label="Стаж (лет)" type="number" value={editForm.experience_years} onChange={v => setEdit("experience_years", v)} />
+                    <Field label="Telegram" placeholder="@username" value={editForm.telegram} onChange={v => setEdit("telegram", v)} />
+                    <Field label="ВКонтакте" placeholder="@id или ссылка" value={editForm.vk} onChange={v => setEdit("vk", v)} />
+                    <Field label="Ссылка на фото" placeholder="https://..." value={editForm.photo_url} onChange={v => setEdit("photo_url", v)} />
+                    <div className="sm:col-span-2 lg:col-span-1">
+                      <label className="block text-xs font-semibold tracking-widest uppercase mb-2"
+                        style={{ color: "rgba(92,184,110,0.8)", fontFamily: "'Oswald',sans-serif" }}>О себе</label>
+                      <textarea value={editForm.bio} onChange={e => setEdit("bio", e.target.value)} rows={3} placeholder="Краткое описание..."
+                        className="w-full rounded-xl px-4 py-3 text-sm outline-none resize-none"
+                        style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }} />
+                    </div>
+                    <div className="sm:col-span-2 lg:col-span-3 flex gap-3">
+                      <button type="submit" disabled={editSaving}
+                        className="px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-all hover:opacity-90 disabled:opacity-50"
+                        style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff" }}>
+                        {editSaving ? "Сохраняю..." : "Сохранить изменения"}
+                      </button>
+                      <button type="button" onClick={() => setEditId(null)}
+                        className="px-6 py-3 rounded-xl text-sm transition-all hover:opacity-80"
+                        style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}>
+                        Отмена
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
               </div>
             ))
           )}
