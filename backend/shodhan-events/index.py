@@ -44,10 +44,15 @@ def get_instructor(cur, token):
     if not token:
         return None
     cur.execute(
-        "SELECT id, full_name, city FROM shodhan_instructors WHERE session_token = %s",
+        "SELECT id, full_name, cities FROM shodhan_instructors WHERE session_token = %s",
         (token,),
     )
-    return cur.fetchone()
+    row = cur.fetchone()
+    if not row:
+        return None
+    inst_id, name, cities = row
+    first_city = cities[0] if cities else ""
+    return (inst_id, name, first_city)
 
 
 def handler(event: dict, context) -> dict:

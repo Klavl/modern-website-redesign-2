@@ -29,13 +29,14 @@ export default function Instructors() {
   }, []);
 
   const cities = useMemo(() => {
-    const set = new Set(all.map(i => i.city).filter(Boolean));
-    return Array.from(set).sort();
+    const set = new Set<string>();
+    all.forEach(i => (i.cities || []).forEach(c => c && set.add(c)));
+    return Array.from(set).sort((a, b) => a.localeCompare(b, "ru"));
   }, [all]);
 
   const filtered = useMemo(() => {
     return all.filter(ins => {
-      if (city && ins.city !== city) return false;
+      if (city && !(ins.cities || []).includes(city)) return false;
       if (gender && ins.gender !== gender) return false;
       if (ageMin && (ins.age ?? 0) < Number(ageMin)) return false;
       if (ageMax && (ins.age ?? 999) > Number(ageMax)) return false;
@@ -186,14 +187,14 @@ function InstructorCard({ ins, index }: { ins: Instructor; index: number }) {
           }}
         />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%)" }} />
-        {ins.city && (
+        {ins.cities && ins.cities.length > 0 && (
           <div style={{
             position: "absolute", bottom: 8, left: 8, right: 8,
             display: "flex", alignItems: "center", gap: 4,
           }}>
             <Icon name="MapPin" size={11} style={{ color: "#5cb86e", flexShrink: 0 }} />
             <span style={{ fontSize: 11, color: "rgba(255,255,255,0.85)", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {ins.city}
+              {ins.cities.join(", ")}
             </span>
           </div>
         )}

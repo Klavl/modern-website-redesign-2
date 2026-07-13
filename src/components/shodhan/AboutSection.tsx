@@ -299,10 +299,10 @@ export default function AboutSection({ instructors = [] }: { instructors?: Instr
                         }}
                       />
                       <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%)" }} />
-                      {ins.city && (
+                      {ins.cities && ins.cities.length > 0 && (
                         <div style={{ position: "absolute", bottom: 7, left: 8, right: 8, display: "flex", alignItems: "center", gap: 3 }}>
                           <Icon name="MapPin" size={10} style={{ color: "#5cb86e", flexShrink: 0 }} />
-                          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.85)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ins.city}</span>
+                          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.85)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ins.cities.join(", ")}</span>
                         </div>
                       )}
                     </div>

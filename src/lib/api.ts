@@ -7,7 +7,7 @@ const INSTRUCTOR_KEY = "shodhan_instructor";
 export type Instructor = {
   id: number;
   full_name: string;
-  city: string;
+  cities: string[];
   bio: string;
   photo_url: string;
   role?: string;
@@ -68,9 +68,9 @@ export async function adminListInstructors() {
   return callAuth({ action: "admin_list" }, token || undefined);
 }
 
-export async function adminCreateInstructor(full_name: string, login: string, password: string, city: string) {
+export async function adminCreateInstructor(full_name: string, login: string, password: string, cities: string[]) {
   const token = getToken();
-  return callAuth({ action: "admin_create", full_name, login, password, city }, token || undefined);
+  return callAuth({ action: "admin_create", full_name, login, password, cities }, token || undefined);
 }
 
 export async function adminDeleteInstructor(id: number) {
@@ -122,9 +122,9 @@ export function getCachedInstructor(): Instructor | null {
   return raw ? JSON.parse(raw) : null;
 }
 
-export async function updateProfile(bio: string, city: string, photo_url: string) {
+export async function updateProfile(bio: string, cities: string[], photo_url: string) {
   const token = getToken();
-  return callAuth({ action: "update", bio, city, photo_url }, token || undefined);
+  return callAuth({ action: "update", bio, cities, photo_url }, token || undefined);
 }
 
 // ── EVENTS ───────────────────────────────────────────────────────────────────

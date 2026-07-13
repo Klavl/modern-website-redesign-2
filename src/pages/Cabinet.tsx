@@ -59,7 +59,7 @@ export default function Cabinet() {
 
   const openCreate = () => {
     setEditId(null);
-    setForm({ ...emptyForm(), city: instructor?.city || "" });
+    setForm({ ...emptyForm(), city: instructor?.cities?.[0] || "" });
     setFormError("");
     setShowForm(true);
   };
@@ -167,7 +167,7 @@ export default function Cabinet() {
               {instructor?.full_name}
             </h2>
             <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
-              {instructor?.city}
+              {instructor?.cities?.join(", ")}
             </p>
           </div>
           <div className="flex items-center gap-2">

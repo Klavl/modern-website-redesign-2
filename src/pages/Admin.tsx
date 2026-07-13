@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { getMe, logout, adminListInstructors, adminCreateInstructor, adminDeleteInstructor, adminSetCredentials, adminUpdateInstructor, type Instructor } from "@/lib/api";
 import Icon from "@/components/ui/icon";
 
-const emptyForm = () => ({ full_name: "", login: "", password: "", city: "", gender: "", age: "", experience_years: "", telegram: "", vk: "" });
+const emptyForm = () => ({ full_name: "", login: "", password: "", cities: [] as string[], gender: "", age: "", experience_years: "", telegram: "", vk: "" });
 const emptyCredsForm = () => ({ login: "", password: "" });
 const emptyEditForm = (ins?: Instructor) => ({
   full_name: ins?.full_name || "",
-  city: ins?.city || "",
+  cities: ins?.cities || [] as string[],
   gender: ins?.gender || "",
   age: ins?.age != null ? String(ins.age) : "",
   experience_years: ins?.experience_years != null ? String(ins.experience_years) : "",
@@ -16,6 +16,60 @@ const emptyEditForm = (ins?: Instructor) => ({
   bio: ins?.bio || "",
   photo_url: ins?.photo_url || "",
 });
+
+function CitiesInput({ value, onChange, accent = "#5cb86e" }: {
+  value: string[]; onChange: (v: string[]) => void; accent?: string;
+}) {
+  const [draft, setDraft] = useState("");
+  const rgb = accent === "#5cb86e" ? "92,184,110" : "201,168,76";
+
+  const addCity = () => {
+    const v = draft.trim();
+    if (v && !value.includes(v)) onChange([...value, v]);
+    setDraft("");
+  };
+
+  return (
+    <div className="sm:col-span-2 lg:col-span-1">
+      <label className="block text-xs font-semibold tracking-widest uppercase mb-2"
+        style={{ color: `rgba(${rgb},0.8)`, fontFamily: "'Oswald',sans-serif" }}>
+        Города
+      </label>
+      <div className="flex gap-2 mb-2">
+        <input
+          type="text"
+          placeholder="Добавить город и Enter"
+          value={draft}
+          onChange={e => setDraft(e.target.value)}
+          onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addCity(); } }}
+          className="flex-1 rounded-xl px-4 py-3 text-sm outline-none"
+          style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }}
+          onFocus={e => (e.currentTarget.style.borderColor = `rgba(${rgb},0.5)`)}
+          onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
+        />
+        <button type="button" onClick={addCity}
+          className="px-4 rounded-xl text-sm font-semibold transition-all hover:opacity-90"
+          style={{ background: `rgba(${rgb},0.15)`, border: `1px solid rgba(${rgb},0.3)`, color: accent }}>
+          <Icon name="Plus" size={16} />
+        </button>
+      </div>
+      {value.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {value.map(c => (
+            <span key={c} className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full"
+              style={{ background: `rgba(${rgb},0.12)`, border: `1px solid rgba(${rgb},0.25)`, color: accent }}>
+              {c}
+              <button type="button" onClick={() => onChange(value.filter(x => x !== c))}
+                style={{ display: "flex", opacity: 0.7 }}>
+                <Icon name="X" size={11} />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function Field({ label, placeholder, type = "text", value, onChange, accent = "#5cb86e" }: {
   label: string; placeholder?: string; type?: string; value: string; onChange: (v: string) => void; accent?: string;
@@ -97,12 +151,12 @@ export default function Admin() {
     setError(""); setSuccess("");
     setSaving(true);
     try {
-      const res = await adminCreateInstructor(form.full_name, form.login, form.password, form.city);
+      const res = await adminCreateInstructor(form.full_name, form.login, form.password, form.cities);
       if (res.error) { setError(res.error); }
       else {
         if (form.gender || form.age || form.experience_years || form.telegram || form.vk) {
           await adminUpdateInstructor(res.id, {
-            full_name: form.full_name, city: form.city,
+            full_name: form.full_name, cities: form.cities,
             gender: form.gender, age: form.age ? Number(form.age) : null,
             experience_years: form.experience_years ? Number(form.experience_years) : null,
             telegram: form.telegram, vk: form.vk,
@@ -150,7 +204,7 @@ export default function Admin() {
     setEditSaving(true);
     try {
       const res = await adminUpdateInstructor(editId!, {
-        full_name: editForm.full_name, city: editForm.city,
+        full_name: editForm.full_name, cities: editForm.cities,
         gender: editForm.gender,
         age: editForm.age ? Number(editForm.age) : null,
         experience_years: editForm.experience_years ? Number(editForm.experience_years) : null,
@@ -233,7 +287,7 @@ export default function Admin() {
             </h3>
             <form onSubmit={handleCreate} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <Field label="Полное имя *" placeholder="Иванов Иван Иванович" value={form.full_name} onChange={v => set("full_name", v)} />
-              <Field label="Город" placeholder="Москва" value={form.city} onChange={v => set("city", v)} />
+              <CitiesInput value={form.cities} onChange={v => setForm(prev => ({ ...prev, cities: v }))} />
               <GenderSelect value={form.gender} onChange={v => set("gender", v)} />
               <Field label="Возраст" placeholder="30" type="number" value={form.age} onChange={v => set("age", v)} />
               <Field label="Стаж (лет)" placeholder="2" type="number" value={form.experience_years} onChange={v => set("experience_years", v)} />
@@ -267,7 +321,7 @@ export default function Admin() {
             </div>
             <form onSubmit={handleEdit} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <Field label="ФИО" value={editForm.full_name} onChange={v => setEdit("full_name", v)} />
-              <Field label="Город" value={editForm.city} onChange={v => setEdit("city", v)} />
+              <CitiesInput value={editForm.cities} onChange={v => setEditForm(prev => ({ ...prev, cities: v }))} />
               <GenderSelect value={editForm.gender} onChange={v => setEdit("gender", v)} />
               <Field label="Возраст" type="number" value={editForm.age} onChange={v => setEdit("age", v)} />
               <Field label="Стаж (лет)" type="number" value={editForm.experience_years} onChange={v => setEdit("experience_years", v)} />
@@ -370,8 +424,8 @@ export default function Admin() {
                 <span style={{ color: ins.experience_years ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.25)", fontSize: 13 }}>
                   {ins.experience_years ? `${ins.experience_years} л.` : "—"}
                 </span>
-                <span style={{ color: ins.city ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.25)", fontSize: 13 }}>
-                  {ins.city || "—"}
+                <span style={{ color: ins.cities?.length ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.25)", fontSize: 13 }}>
+                  {ins.cities?.length ? ins.cities.join(", ") : "—"}
                 </span>
                 <span style={{ fontSize: 12 }}>
                   {ins.telegram

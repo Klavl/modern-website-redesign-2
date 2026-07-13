@@ -3,7 +3,7 @@
 action=login              — вход по логину+паролю
 action=me                 — получить профиль (X-Session-Token)
 action=logout             — выход
-action=update             — обновить профиль (bio, city, photo_url)
+action=update             — обновить профиль (bio, cities, photo_url)
 action=public_instructors — публичный список инструкторов
 action=admin_list         — список инструкторов (только admin)
 action=admin_create       — создать инструктора (только admin)
@@ -50,11 +50,26 @@ def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
 
 
+def parse_cities(body):
+    """Принимает cities (list) из тела запроса, чистит и убирает дубли/пустые значения."""
+    raw = body.get("cities")
+    if raw is None:
+        return None
+    if not isinstance(raw, list):
+        return []
+    seen = []
+    for c in raw:
+        c = (str(c) or "").strip()
+        if c and c not in seen:
+            seen.append(c)
+    return seen
+
+
 def get_instructor_by_token(cur, token):
     if not token:
         return None
     cur.execute(
-        "SELECT id, full_name, city, bio, photo_url, role FROM shodhan_instructors WHERE session_token = %s",
+        "SELECT id, full_name, cities, bio, photo_url, role FROM shodhan_instructors WHERE session_token = %s",
         (token,),
     )
     return cur.fetchone()
@@ -94,7 +109,7 @@ def handler(event: dict, context) -> dict:
 
         pw_hash = hash_password(password)
         cur.execute(
-            "SELECT id, full_name, city, bio, photo_url, role FROM shodhan_instructors WHERE login = %s AND password_hash = %s",
+            "SELECT id, full_name, cities, bio, photo_url, role FROM shodhan_instructors WHERE login = %s AND password_hash = %s",
             (login_val, pw_hash),
         )
         row = cur.fetchone()
@@ -102,7 +117,7 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return err("Неверный логин или пароль")
 
-        inst_id, name, city, bio, photo_url, role = row
+        inst_id, name, cities, bio, photo_url, role = row
         new_token = secrets.token_hex(32)
         cur.execute("UPDATE shodhan_instructors SET session_token = %s WHERE id = %s", (new_token, inst_id))
         conn.commit()
@@ -113,7 +128,7 @@ def handler(event: dict, context) -> dict:
             "instructor": {
                 "id": inst_id,
                 "full_name": name,
-                "city": city or "",
+                "cities": cities or [],
                 "bio": bio or "",
                 "photo_url": photo_url or "",
                 "role": role,
@@ -126,9 +141,9 @@ def handler(event: dict, context) -> dict:
         if not row:
             conn.close()
             return err("Токен недействителен", 401)
-        inst_id, name, city, bio, photo_url, role = row
+        inst_id, name, cities, bio, photo_url, role = row
         conn.close()
-        return ok({"id": inst_id, "full_name": name, "city": city or "", "bio": bio or "", "photo_url": photo_url or "", "role": role})
+        return ok({"id": inst_id, "full_name": name, "cities": cities or [], "bio": bio or "", "photo_url": photo_url or "", "role": role})
 
     # ── LOGOUT ────────────────────────────────────────────────────────────────
     if action == "logout":
@@ -145,9 +160,12 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return err("Требуется авторизация", 401)
         inst_id = row[0]
+        cities = parse_cities(body)
+        if cities is None:
+            cities = row[2] or []
         cur.execute(
-            "UPDATE shodhan_instructors SET bio = %s, photo_url = %s, city = %s WHERE id = %s",
-            (body.get("bio", ""), body.get("photo_url", ""), body.get("city", ""), inst_id),
+            "UPDATE shodhan_instructors SET bio = %s, photo_url = %s, cities = %s WHERE id = %s",
+            (body.get("bio", ""), body.get("photo_url", ""), cities, inst_id),
         )
         conn.commit()
         conn.close()
@@ -156,7 +174,7 @@ def handler(event: dict, context) -> dict:
     # ── PUBLIC: LIST INSTRUCTORS ───────────────────────────────────────────────
     if action == "public_instructors":
         cur.execute(
-            """SELECT id, full_name, city, bio, photo_url, gender, age, experience_years, telegram, vk
+            """SELECT id, full_name, cities, bio, photo_url, gender, age, experience_years, telegram, vk
                FROM shodhan_instructors
                WHERE role = 'instructor'
                ORDER BY full_name"""
@@ -165,7 +183,7 @@ def handler(event: dict, context) -> dict:
         conn.close()
         return ok({"instructors": [
             {
-                "id": r[0], "full_name": r[1], "city": r[2] or "",
+                "id": r[0], "full_name": r[1], "cities": r[2] or [],
                 "bio": r[3] or "", "photo_url": r[4] or "",
                 "gender": r[5] or "", "age": r[6],
                 "experience_years": r[7], "telegram": r[8] or "", "vk": r[9] or ""
@@ -180,7 +198,7 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return error
         cur.execute(
-            """SELECT id, full_name, login, city, role, created_at,
+            """SELECT id, full_name, login, cities, role, created_at,
                       gender, age, experience_years, telegram, vk, photo_url, bio
                FROM shodhan_instructors ORDER BY created_at"""
         )
@@ -188,7 +206,7 @@ def handler(event: dict, context) -> dict:
         conn.close()
         return ok({"instructors": [
             {
-                "id": r[0], "full_name": r[1], "login": r[2], "city": r[3] or "",
+                "id": r[0], "full_name": r[1], "login": r[2], "cities": r[3] or [],
                 "role": r[4], "created_at": str(r[5]),
                 "gender": r[6] or "", "age": r[7], "experience_years": r[8],
                 "telegram": r[9] or "", "vk": r[10] or "",
@@ -207,7 +225,7 @@ def handler(event: dict, context) -> dict:
         login_val = (body.get("login") or "").strip()
         password = (body.get("password") or "").strip()
         full_name = (body.get("full_name") or "").strip()
-        city = (body.get("city") or "").strip()
+        cities = parse_cities(body) or []
         gender = (body.get("gender") or "").strip() or None
         age = body.get("age") or None
         experience_years = body.get("experience_years") or None
@@ -227,9 +245,9 @@ def handler(event: dict, context) -> dict:
         phone_placeholder = "login:" + login_val
         cur.execute(
             """INSERT INTO shodhan_instructors
-               (full_name, phone, city, login, password_hash, role, gender, age, experience_years, telegram, vk)
-               VALUES (%s, %s, %s, %s, %s, 'instructor', %s, %s, %s, %s, %s) RETURNING id""",
-            (full_name, phone_placeholder, city, login_val, pw_hash, gender, age, experience_years, telegram, vk),
+               (full_name, phone, city, cities, login, password_hash, role, gender, age, experience_years, telegram, vk)
+               VALUES (%s, %s, %s, %s, %s, %s, 'instructor', %s, %s, %s, %s, %s) RETURNING id""",
+            (full_name, phone_placeholder, cities[0] if cities else "", cities, login_val, pw_hash, gender, age, experience_years, telegram, vk),
         )
         new_id = cur.fetchone()[0]
         conn.commit()
@@ -247,7 +265,11 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return err("Не указан id")
         full_name = (body.get("full_name") or "").strip()
-        city = (body.get("city") or "").strip()
+        cities = parse_cities(body)
+        if cities is None:
+            cur.execute("SELECT cities FROM shodhan_instructors WHERE id = %s", (target_id,))
+            existing = cur.fetchone()
+            cities = existing[0] if existing and existing[0] else []
         gender = (body.get("gender") or "").strip() or None
         age = body.get("age") or None
         experience_years = body.get("experience_years") or None
@@ -257,10 +279,10 @@ def handler(event: dict, context) -> dict:
         photo_url = (body.get("photo_url") or "").strip()
         cur.execute(
             """UPDATE shodhan_instructors
-               SET full_name=%s, city=%s, gender=%s, age=%s, experience_years=%s,
+               SET full_name=%s, city=%s, cities=%s, gender=%s, age=%s, experience_years=%s,
                    telegram=%s, vk=%s, bio=%s, photo_url=%s
                WHERE id=%s""",
-            (full_name, city, gender, age, experience_years, telegram, vk, bio, photo_url, target_id),
+            (full_name, cities[0] if cities else "", cities, gender, age, experience_years, telegram, vk, bio, photo_url, target_id),
         )
         conn.commit()
         conn.close()
