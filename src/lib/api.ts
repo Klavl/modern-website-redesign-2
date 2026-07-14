@@ -141,12 +141,12 @@ export async function getMyEvents(): Promise<ShodhanEvent[]> {
   return data.events || [];
 }
 
-export async function createEvent(event: Omit<ShodhanEvent, "id" | "is_active" | "instructor_name" | "instructor_photo" | "instructor_id">) {
+export async function createEvent(event: Omit<ShodhanEvent, "id" | "title" | "is_active" | "instructor_name" | "instructor_photo" | "instructor_id">) {
   const token = getToken();
   return callEvents({ action: "create", ...event }, token || undefined);
 }
 
-export async function updateEvent(id: number, event: Omit<ShodhanEvent, "id" | "is_active" | "instructor_name" | "instructor_photo" | "instructor_id">) {
+export async function updateEvent(id: number, event: Omit<ShodhanEvent, "id" | "title" | "is_active" | "instructor_name" | "instructor_photo" | "instructor_id">) {
   const token = getToken();
   return callEvents({ action: "update", id, ...event }, token || undefined);
 }
