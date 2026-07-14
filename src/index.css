@@ -257,6 +257,18 @@
     opacity: 0;
   }
 
+  .btn-shodhan {
+    background: linear-gradient(115deg, #2d7a3d, #5cb86e, #7fd68f, #3a8f4a, #5cb86e);
+    background-size: 300% 300%;
+    animation: shodhan-glow 4s ease infinite;
+  }
+
+  @keyframes shodhan-glow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
   /* Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;

@@ -47,10 +47,10 @@ export default function AboutSection({ instructors = [] }: { instructors?: Instr
                 Практика включает движение, дыхание, голос, звук и медитативное погружение — всё это
                 вместе создаёт мощный инструмент трансформации сознания.
               </p>
-              <a href="#contact"
-                className="inline-block px-8 py-3.5 rounded-full font-semibold text-sm tracking-widest uppercase transition-all duration-300 hover:scale-105"
-                style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff" }}>
-                Попробовать
+              <a href="#instructors"
+                className="btn-shodhan inline-block px-8 py-3.5 rounded-full font-semibold text-sm tracking-widest uppercase transition-all duration-300 hover:scale-105"
+                style={{ color: "#fff" }}>
+                Выбрать инструктора
               </a>
             </FadeIn>
 
@@ -88,75 +88,57 @@ export default function AboutSection({ instructors = [] }: { instructors?: Instr
 
           {/* Об авторе — Дмитрий Хара */}
           <FadeIn delay={0.1} className="mt-20">
-            <div className="text-center mb-10">
-              <h2 className="mb-1"
-                style={{ fontFamily: "'Oswald',sans-serif", fontSize: "clamp(28px,4vw,48px)", fontWeight: 700, color: "#5cb86e", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+            <div className="text-center mb-12">
+              <h2 className="mb-2"
+                style={{ fontFamily: "'Oswald',sans-serif", fontSize: "clamp(30px,4.5vw,52px)", fontWeight: 700, color: "#5cb86e", letterSpacing: "0.06em", textTransform: "uppercase" }}>
                 ОБ АВТОРЕ
               </h2>
               <h3
-                style={{ fontFamily: "'Oswald',sans-serif", fontSize: "clamp(36px,6vw,64px)", fontWeight: 700, color: "#fff", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                style={{ fontFamily: "'Oswald',sans-serif", fontSize: "clamp(42px,7vw,80px)", fontWeight: 700, color: "#fff", letterSpacing: "0.06em", textTransform: "uppercase" }}>
                 ДМИТРИЙ ХАРА
               </h3>
             </div>
 
-            <div className="grid md:grid-cols-[1fr_auto_1fr] gap-6 md:gap-8 items-start">
-              {/* Left facts */}
-              <div className="flex flex-col gap-4">
-                {[
-                  "Спикер международного саммита «В потоке» (совместно с Джо Диспенза, Брюсом Липтоном, Греггом Брейденом, Дипаком Чопра, Далай Ламой и другими спикерами мирового уровня)",
-                  "Более 10 лет Дмитрий занимается вопросами развития личности. Его книги рекомендуют к прочтению на своих занятиях ведущие тренеры и коучи России.",
-                  "Автор активной медитации первоэлементов «Шодхан», которую проводят более 200 инструкторов по всему миру",
-                  "Отец пятерых детей",
-                ].map((text, i) => (
-                  <div key={i} className="flex gap-3 items-start rounded-xl px-4 py-3"
-                    style={{ background: "rgba(92,184,110,0.08)", border: "1px solid rgba(92,184,110,0.18)" }}>
-                    <div className="shrink-0 mt-0.5 w-5 h-5 rounded-full flex items-center justify-center"
-                      style={{ background: "rgba(92,184,110,0.2)", border: "1px solid rgba(92,184,110,0.4)" }}>
-                      <Icon name="Check" size={11} style={{ color: "#5cb86e" }} />
-                    </div>
-                    <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.82)", fontFamily: "'Montserrat',sans-serif" }}>
-                      {text}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Center photo */}
-              <div className="relative flex flex-col items-center mx-auto" style={{ width: 260 }}>
-                <div className="relative rounded-2xl overflow-hidden"
-                  style={{ width: 260, height: 360, border: "2px solid rgba(92,184,110,0.25)", boxShadow: "0 20px 60px rgba(0,0,0,0.6)" }}>
+            <div className="grid lg:grid-cols-[minmax(0,420px)_1fr] gap-10 lg:gap-14 items-center">
+              {/* Большое фото + цитата */}
+              <div className="relative flex flex-col items-center mx-auto w-full" style={{ maxWidth: 420 }}>
+                <div className="relative rounded-3xl overflow-hidden w-full"
+                  style={{ aspectRatio: "3/4", border: "3px solid rgba(92,184,110,0.3)", boxShadow: "0 30px 80px rgba(0,0,0,0.65)" }}>
                   <img src={DMITRY_PHOTO} alt="Дмитрий Хара"
                     className="w-full h-full object-cover"
                     style={{ objectPosition: "center top" }}
-                    onError={e => { (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=ДХ&background=2d4a2d&color=fff&size=260`; }} />
+                    onError={e => { (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=ДХ&background=2d4a2d&color=fff&size=420`; }} />
                   <div className="absolute inset-0 pointer-events-none"
                     style={{ background: "linear-gradient(to top, rgba(10,20,15,0.85) 0%, transparent 50%)" }} />
                 </div>
                 {/* Quote */}
-                <div className="mt-4 rounded-xl px-4 py-3 text-center"
-                  style={{ background: "rgba(92,184,110,0.12)", border: "1px solid rgba(92,184,110,0.25)", maxWidth: 260 }}>
-                  <p className="text-xs leading-relaxed italic"
-                    style={{ color: "rgba(255,255,255,0.75)", fontFamily: "'Montserrat',sans-serif" }}>
+                <div className="mt-6 rounded-2xl px-6 py-5 text-center w-full"
+                  style={{ background: "rgba(92,184,110,0.12)", border: "1px solid rgba(92,184,110,0.25)" }}>
+                  <p className="leading-relaxed italic"
+                    style={{ color: "rgba(255,255,255,0.85)", fontFamily: "'Montserrat',sans-serif", fontSize: "clamp(14px,1.6vw,17px)" }}>
                     «Эта медитация пришла ко мне, как ответ на запрос о медитации, которая не отрывала бы от земли, и позволяла бы сохранять социальную активность и пробуждённое состояние сознания одновременно»
                   </p>
                 </div>
               </div>
 
-              {/* Right facts */}
+              {/* Факты — единая колонка, крупнее и читабельнее */}
               <div className="flex flex-col gap-4">
                 {[
-                  "С 2013 года ведёт авторские программы и ретриты",
+                  "Спикер международного саммита «В потоке» (совместно с Джо Диспенза, Брюсом Липтоном, Греггом Брейденом, Дипаком Чопра, Далай Ламой и другими спикерами мирового уровня)",
+                  "Более 10 лет Дмитрий занимается вопросами развития личности. Его книги рекомендуют к прочтению на своих занятиях ведущие тренеры и коучи России.",
+                  "Автор активной медитации первоэлементов «Шодхан», которую проводят более 200 инструкторов по всему миру",
+                  "С 2013 года ведёт авторские программы и ретриты. Отец пятерых детей",
                   "Основатель нового подхода к предпринимательству «Живой Бизнес»",
                   "Более 15 лет — меценат центра «Анима» (для творческого развития детей с ограниченными возможностями здоровья)",
                   "Писатель. Автор книг-бестселлеров, меняющих сознание — «П.Ш.», «Трэш», «Сияние», «ПерепроШивка», «64 Дара Бытия», метафорических карт «Камертон Вселенной»",
                 ].map((text, i) => (
-                  <div key={i} className="flex gap-3 items-start rounded-xl px-4 py-3"
+                  <div key={i} className="flex gap-4 items-start rounded-2xl px-5 py-4"
                     style={{ background: "rgba(92,184,110,0.08)", border: "1px solid rgba(92,184,110,0.18)" }}>
-                    <div className="shrink-0 mt-0.5 w-5 h-5 rounded-full flex items-center justify-center"
+                    <div className="shrink-0 mt-0.5 w-7 h-7 rounded-full flex items-center justify-center"
                       style={{ background: "rgba(92,184,110,0.2)", border: "1px solid rgba(92,184,110,0.4)" }}>
-                      <Icon name="Check" size={11} style={{ color: "#5cb86e" }} />
+                      <Icon name="Check" size={14} style={{ color: "#5cb86e" }} />
                     </div>
-                    <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.82)", fontFamily: "'Montserrat',sans-serif" }}>
+                    <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.88)", fontFamily: "'Montserrat',sans-serif", fontSize: "clamp(14px,1.6vw,17px)" }}>
                       {text}
                     </p>
                   </div>
@@ -246,10 +228,10 @@ export default function AboutSection({ instructors = [] }: { instructors?: Instr
           </div>
 
           <FadeIn className="text-center">
-            <a href="#contact"
-              className="inline-block px-10 py-4 rounded-full font-bold text-sm tracking-widest uppercase transition-all duration-300 hover:scale-105"
-              style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff", boxShadow: "0 8px 30px rgba(60,150,80,0.4)" }}>
-              Записаться на медитацию
+            <a href="#instructors"
+              className="btn-shodhan inline-block px-10 py-4 rounded-full font-bold text-sm tracking-widest uppercase transition-all duration-300 hover:scale-105"
+              style={{ color: "#fff", boxShadow: "0 8px 30px rgba(60,150,80,0.4)" }}>
+              Выбрать инструктора
             </a>
           </FadeIn>
         </div>
@@ -329,12 +311,12 @@ export default function AboutSection({ instructors = [] }: { instructors?: Instr
 
           <FadeIn className="text-center mt-12 flex flex-col sm:flex-row gap-4 justify-center">
             <a href="/instructors"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-sm tracking-widest uppercase transition-all duration-300 hover:scale-105"
-              style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff", boxShadow: "0 6px 24px rgba(60,150,80,0.35)" }}>
+              className="btn-shodhan inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-sm tracking-widest uppercase transition-all duration-300 hover:scale-105"
+              style={{ color: "#fff", boxShadow: "0 6px 24px rgba(60,150,80,0.35)" }}>
               <Icon name="Users" size={16} />
-              Показать всех
+              Выбрать инструктора
             </a>
-            <a href="#contact"
+            <a href="https://dskornev.ru/instr" target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-sm tracking-widest uppercase transition-all duration-300 hover:scale-105"
               style={{ border: "1px solid rgba(92,184,110,0.4)", color: "#5cb86e", background: "rgba(92,184,110,0.05)" }}>
               <Icon name="UserPlus" size={16} />
@@ -405,12 +387,12 @@ export default function AboutSection({ instructors = [] }: { instructors?: Instr
               почувствовать силу активной медитации.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="#contact"
-                className="px-10 py-4 rounded-full font-bold text-sm tracking-widest uppercase transition-all duration-300 hover:scale-105"
-                style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff", boxShadow: "0 8px 30px rgba(60,150,80,0.5)" }}>
-                Записаться на сессию
+              <a href="#instructors"
+                className="btn-shodhan px-10 py-4 rounded-full font-bold text-sm tracking-widest uppercase transition-all duration-300 hover:scale-105"
+                style={{ color: "#fff", boxShadow: "0 8px 30px rgba(60,150,80,0.5)" }}>
+                Выбрать инструктора
               </a>
-              <a href="https://t.me/shodhan" target="_blank" rel="noopener noreferrer"
+              <a href="https://telegram.me/ministerstvoshastya" target="_blank" rel="noopener noreferrer"
                 className="px-8 py-4 rounded-full font-medium text-sm tracking-widest uppercase inline-flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105"
                 style={{ border: "1px solid rgba(255,255,255,0.3)", color: "#fff", background: "rgba(255,255,255,0.05)" }}>
                 <Icon name="Send" size={14} />

@@ -212,47 +212,34 @@ export default function EventsSection({ events }: Props) {
 
           <div className="grid md:grid-cols-2 gap-10">
             <FadeIn>
-              <div className="rounded-2xl p-8"
-                style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                <h3 className="font-display font-bold text-xl mb-6"
-                  style={{ fontFamily: "'Oswald',sans-serif", color: "#fff", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  ОСТАВИТЬ ЗАЯВКУ
-                </h3>
-                <div className="space-y-4">
-                  {[
-                    { label: "Ваше имя", placeholder: "Как вас зовут?" },
-                    { label: "Телефон или Email", placeholder: "+7 (___) ___-__-__" },
-                    { label: "Ваш город", placeholder: "Москва, Санкт-Петербург..." },
-                  ].map((f, i) => (
-                    <div key={i}>
-                      <label className="block text-xs font-semibold tracking-widest uppercase mb-2"
-                        style={{ color: "rgba(92,184,110,0.7)", fontFamily: "'Oswald',sans-serif" }}>
-                        {f.label}
-                      </label>
-                      <input type="text" placeholder={f.placeholder}
-                        className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-all duration-200"
-                        style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", fontFamily: "'Montserrat',sans-serif" }}
-                        onFocus={e => (e.currentTarget.style.borderColor = "rgba(92,184,110,0.4)")}
-                        onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
-                      />
-                    </div>
-                  ))}
-                  <button
-                    className="w-full py-3.5 rounded-xl font-bold text-sm tracking-widest uppercase transition-all duration-200 hover:opacity-90 mt-2"
-                    style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff", fontFamily: "'Oswald',sans-serif" }}>
-                    Отправить заявку
-                  </button>
+              <div className="rounded-2xl p-8 h-full flex flex-col items-start justify-center"
+                style={{ background: "linear-gradient(145deg,rgba(20,45,25,0.7),rgba(10,25,15,0.7))", border: "1px solid rgba(92,184,110,0.25)" }}>
+                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-5"
+                  style={{ background: "rgba(92,184,110,0.15)", border: "1px solid rgba(92,184,110,0.35)" }}>
+                  <Icon name="UserPlus" size={22} style={{ color: "#5cb86e" }} />
                 </div>
+                <h3 className="font-display font-bold text-xl mb-3"
+                  style={{ fontFamily: "'Oswald',sans-serif", color: "#fff", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                  СТАТЬ ИНСТРУКТОРОМ ШОДХАН
+                </h3>
+                <p className="text-sm leading-relaxed mb-6" style={{ color: "rgba(255,255,255,0.65)" }}>
+                  Пройди обучение и веди практику Шодхан в своём городе вместе с командой из более чем 200 инструкторов по всему миру.
+                </p>
+                <a href="https://dskornev.ru/instr" target="_blank" rel="noopener noreferrer"
+                  className="btn-shodhan inline-block px-8 py-3.5 rounded-xl font-bold text-sm tracking-widest uppercase transition-all duration-200 hover:scale-105"
+                  style={{ color: "#fff", fontFamily: "'Oswald',sans-serif" }}>
+                  Стать инструктором
+                </a>
               </div>
             </FadeIn>
 
             <FadeIn delay={0.15}>
               <div className="flex flex-col gap-5 h-full">
                 {[
-                  { icon: "MessageCircle", label: "Telegram", val: "@shodhan_official", href: "https://t.me/shodhan_official" },
-                  { icon: "Instagram", label: "Instagram", val: "@shodhan.ru", href: "https://instagram.com" },
-                  { icon: "Globe", label: "Сайт", val: "khara.ru", href: "https://khara.ru" },
-                  { icon: "Mail", label: "Email", val: "info@shodhan.ru", href: "mailto:info@shodhan.ru" },
+                  { icon: "Send", label: "Telegram", val: "Министерство Счастья", href: "https://telegram.me/ministerstvoshastya" },
+                  { icon: "MessageSquare", label: "ВКонтакте", val: "Министерство Счастья", href: "https://vk.com/happinessministry" },
+                  { icon: "Instagram", label: "Instagram", val: "Министерство Счастья", href: "https://www.instagram.com/happinessministry/" },
+                  { icon: "MessageCircle", label: "MAX", val: "Министерство Счастья", href: "https://max.ru/join/sv6RAm_GuHxevgVXkqTs4t3JzaoBw2yC9qiipYygVaE" },
                 ].map((c, i) => (
                   <a key={i} href={c.href} target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-4 rounded-2xl p-5 transition-all duration-200 hover:-translate-y-0.5"

@@ -24,6 +24,8 @@ export const useInView = (threshold = 0.1) => {
 
 export const DMITRY_PHOTO = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/6e2df17f-042f-4f94-95b3-dfc3557a23c0.png";
 
+export const GROUP_PHOTO = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/b6c1465d-923c-4a06-95af-2ede37c4ad60.jpg";
+
 export const INSTRUCTORS_MAIN = [
   { img: DMITRY_PHOTO },
   { img: "https://cdn.poehali.dev/files/7dcc45c1-c7e8-402d-86f7-a0cdca2cd9d0.png" },

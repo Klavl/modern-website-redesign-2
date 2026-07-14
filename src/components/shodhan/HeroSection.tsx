@@ -1,6 +1,5 @@
 import Icon from "@/components/ui/icon";
-import FadeIn from "./FadeIn";
-import { DMITRY_PHOTO, INSTRUCTORS_MAIN, NAV } from "./shared";
+import { GROUP_PHOTO, NAV } from "./shared";
 
 type Props = {
   scrolled: boolean;
@@ -35,10 +34,10 @@ export default function HeroSection({ scrolled, menuOpen, setMenuOpen }: Props) 
                 {n.label}
               </a>
             ))}
-            <a href="#contact"
-              className="px-5 py-2 rounded-full text-xs font-semibold tracking-widest uppercase transition-all duration-200"
-              style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff", letterSpacing: "0.12em" }}>
-              Записаться
+            <a href="#instructors"
+              className="btn-shodhan px-5 py-2 rounded-full text-xs font-semibold tracking-widest uppercase transition-all duration-200 hover:scale-105"
+              style={{ color: "#fff", letterSpacing: "0.12em" }}>
+              Выбрать инструктора
             </a>
           </div>
           <button className="md:hidden p-1" style={{ color: "#fff" }} onClick={() => setMenuOpen(!menuOpen)}>
@@ -55,9 +54,10 @@ export default function HeroSection({ scrolled, menuOpen, setMenuOpen }: Props) 
                 {n.label}
               </a>
             ))}
-            <a href="#contact" className="mt-2 py-3 rounded-full text-xs font-semibold text-center tracking-widest uppercase"
-              style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff" }}>
-              Записаться
+            <a href="#instructors" onClick={() => setMenuOpen(false)}
+              className="btn-shodhan mt-2 py-3 rounded-full text-xs font-semibold text-center tracking-widest uppercase"
+              style={{ color: "#fff" }}>
+              Выбрать инструктора
             </a>
           </div>
         )}
@@ -65,35 +65,21 @@ export default function HeroSection({ scrolled, menuOpen, setMenuOpen }: Props) 
 
       {/* ══════════ HERO ══════════ */}
       <section className="relative min-h-screen flex flex-col overflow-hidden">
-        {/* Фон — горы */}
+        {/* Фон — общее фото группы */}
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80"
-            alt="горы"
+            src={GROUP_PHOTO}
+            alt="Шодхан — практика в группе"
             className="w-full h-full object-cover"
-            style={{ filter: "brightness(0.45) saturate(1.1)" }}
+            style={{ filter: "brightness(0.4) saturate(1.05)" }}
           />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,10,25,0.35) 0%, rgba(0,8,20,0.1) 35%, rgba(0,8,20,0.55) 75%, #0a0e1a 100%)" }} />
-
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,10,25,0.55) 0%, rgba(0,8,20,0.35) 40%, rgba(0,8,20,0.65) 75%, #0a0e1a 100%)" }} />
         </div>
 
-        {/* Фото Дмитрия — правая сторона, скрыто на маленьких экранах */}
-        <div className="absolute bottom-0 right-0 z-10 pointer-events-none hidden sm:block"
-          style={{ width: "clamp(280px, 48vw, 820px)" }}>
-          <img
-            src={DMITRY_PHOTO}
-            alt="Дмитрий Хара"
-            className="w-full object-contain object-bottom"
-            style={{ maxHeight: "100vh" }}
-          />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-32 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse, rgba(92,184,110,0.18) 0%, transparent 70%)" }} />
-        </div>
-
-        {/* Контент */}
-        <div className="relative z-20 flex flex-col justify-center min-h-screen px-6 md:px-16"
-          style={{ maxWidth: "clamp(300px, 55vw, 720px)" }}>
-          <div className="pt-20 pb-10">
+        {/* Контент — по центру */}
+        <div className="relative z-20 flex flex-col items-center justify-center min-h-screen px-6 text-center mx-auto"
+          style={{ maxWidth: "clamp(300px, 90vw, 820px)" }}>
+          <div className="pt-24 pb-10 flex flex-col items-center">
             <p className="text-xs font-semibold tracking-widest uppercase mb-3"
               style={{ fontFamily: "'Oswald',sans-serif", color: "#5cb86e", letterSpacing: "0.2em" }}>
               Авторский метод
@@ -110,49 +96,15 @@ export default function HeroSection({ scrolled, menuOpen, setMenuOpen }: Props) 
             <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
               Автор метода — <strong style={{ color: "rgba(255,255,255,0.8)" }}>Дмитрий Хара</strong>
             </p>
-            <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.5)" }}>
+            <p className="text-sm mb-8" style={{ color: "rgba(255,255,255,0.5)" }}>
               Шодхан в твоём городе! Выбери своего инструктора
             </p>
 
-            {/* Мобильное фото */}
-            <div className="sm:hidden mb-6 flex justify-center">
-              <div className="rounded-2xl overflow-hidden"
-                style={{ width: "min(260px, 70vw)", aspectRatio: "3/4", border: "2px solid rgba(92,184,110,0.25)", boxShadow: "0 12px 40px rgba(0,0,0,0.6)" }}>
-                <img src={DMITRY_PHOTO} alt="Дмитрий Хара" className="w-full h-full object-cover object-top" />
-              </div>
-            </div>
-
-            <div className="flex flex-col xs:flex-row gap-3 mb-8">
-              <a href="#about"
-                className="px-6 py-3.5 rounded-full font-semibold tracking-widest uppercase transition-all duration-300 hover:scale-105 text-center"
-                style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff", boxShadow: "0 6px 24px rgba(60,150,80,0.45)", fontSize: "clamp(11px,1.4vw,13px)" }}>
-                Узнать о методе
-              </a>
-              <a href="#instructors"
-                className="px-6 py-3.5 rounded-full font-medium tracking-widest uppercase transition-all duration-300 hover:scale-105 text-center"
-                style={{ border: "1px solid rgba(255,255,255,0.35)", color: "#fff", backdropFilter: "blur(8px)", background: "rgba(255,255,255,0.07)", fontSize: "clamp(11px,1.4vw,13px)" }}>
-                Выбрать инструктора
-              </a>
-            </div>
-
-            {/* Круглые фото инструкторов */}
-            <div>
-              <p className="text-xs mb-3" style={{ color: "rgba(255,255,255,0.35)", fontFamily: "'Montserrat',sans-serif", letterSpacing: "0.08em" }}>
-                ИНСТРУКТОРЫ
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {INSTRUCTORS_MAIN.slice(0, 9).map((ins, i) => (
-                  <div key={i} className="group cursor-pointer">
-                    <div className="rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-110"
-                      style={{ width: 44, height: 44, border: "2px solid rgba(255,255,255,0.3)", boxShadow: "0 3px 12px rgba(0,0,0,0.5)" }}>
-                      <img src={ins.img} alt=""
-                        className="w-full h-full object-cover object-top"
-                        onError={e => { (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=ШД&background=1a3a22&color=5cb86e&size=44`; }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <a href="#instructors"
+              className="btn-shodhan px-8 py-4 rounded-full font-semibold tracking-widest uppercase transition-all duration-300 hover:scale-105 text-center"
+              style={{ color: "#fff", boxShadow: "0 6px 30px rgba(60,150,80,0.5)", fontSize: "clamp(12px,1.6vw,14px)" }}>
+              Выбрать инструктора
+            </a>
           </div>
         </div>
 

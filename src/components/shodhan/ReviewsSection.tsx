@@ -1,7 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 
-const BASE = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/review-thumbs";
-
 const VIDEOS = [
   { url: "https://rutube.ru/video/d8a7ba60e26cfdbcc6e9eea93d9ad9c7/", thumb: "https://cdn.poehali.dev/files/be81bf2f-786d-4213-bf96-0d4bd69fca2d.png" },
   { url: "https://rutube.ru/video/8f2484e0e5ca253e32cea2945db51372/", thumb: "https://cdn.poehali.dev/files/502b918d-b9b8-4a4a-9bf1-d2b55e19ab56.png" },
@@ -122,7 +120,7 @@ export default function ReviewsSection() {
           <div style={{ width: 80, height: 4, margin: "16px auto 0", borderRadius: 9999, background: "linear-gradient(90deg,#3a8f4a,#5cb86e)" }} />
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 16 }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {VIDEOS.map((v, i) => (
             <VideoCard key={i} url={v.url} thumb={v.thumb} index={i} />
           ))}
