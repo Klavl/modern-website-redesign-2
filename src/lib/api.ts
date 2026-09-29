@@ -1,5 +1,5 @@
-const AUTH_URL = "https://functions.poehali.dev/ff1614be-0445-4f10-921a-09d271205366";
-const EVENTS_URL = "https://functions.poehali.dev/64afce21-a026-4651-8beb-2d3b8cf3bd77";
+const AUTH_URL = "https://functions.poehali.dev/28a8107c-78c1-4995-89e8-9152b5854881";
+const EVENTS_URL = "https://functions.poehali.dev/bbe0da19-492d-4706-a8c2-3fa4bd60fa49";
 
 const TOKEN_KEY = "shodhan_token";
 const INSTRUCTOR_KEY = "shodhan_instructor";
