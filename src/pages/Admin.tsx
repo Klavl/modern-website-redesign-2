@@ -384,33 +384,6 @@ export default function Admin() {
           </div>
         )}
 
-        {/* Set credentials form */}
-        {credsId !== null && (
-          <div className="mb-6 rounded-2xl p-6"
-            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(201,168,76,0.3)" }}>
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="text-sm font-bold uppercase tracking-widest"
-                style={{ fontFamily: "'Oswald',sans-serif", color: "#c9a84c" }}>
-                Назначить логин и пароль — {instructors.find(i => i.id === credsId)?.full_name}
-              </h3>
-              <button onClick={() => { setCredsId(null); setCredsForm(emptyCredsForm()); }} className="p-1 opacity-50 hover:opacity-100" style={{ color: "#fff" }}>
-                <Icon name="X" size={16} />
-              </button>
-            </div>
-            <form onSubmit={handleSetCreds} className="grid sm:grid-cols-2 gap-4">
-              <Field label="Логин" placeholder="instructor_login" value={credsForm.login} onChange={v => setCreds("login", v)} accent="#c9a84c" />
-              <Field label="Пароль" placeholder="Надёжный пароль" type="password" value={credsForm.password} onChange={v => setCreds("password", v)} accent="#c9a84c" />
-              <div className="sm:col-span-2">
-                <button type="submit" disabled={credsSaving}
-                  className="px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-all hover:opacity-90 disabled:opacity-50"
-                  style={{ background: "linear-gradient(135deg,#a87a20,#c9a84c)", color: "#fff" }}>
-                  {credsSaving ? "Сохраняю..." : "Сохранить"}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
         {/* Table */}
         <div className="rounded-2xl overflow-x-auto" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
           {/* Header */}
@@ -442,7 +415,7 @@ export default function Admin() {
                 gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr 1fr 1fr auto",
                 gap: 0,
                 alignItems: "center",
-                borderBottom: editId === ins.id ? "none" : "1px solid rgba(255,255,255,0.04)",
+                borderBottom: editId === ins.id || credsId === ins.id ? "none" : "1px solid rgba(255,255,255,0.04)",
                 padding: "12px 16px",
                 minWidth: 820,
               }}>
@@ -533,6 +506,35 @@ export default function Admin() {
                         className="px-6 py-3 rounded-xl text-sm transition-all hover:opacity-80"
                         style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}>
                         Отмена
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+              {credsId === ins.id && (
+                <div style={{
+                  padding: "18px 16px 22px",
+                  background: "rgba(201,168,76,0.06)",
+                  borderBottom: "1px solid rgba(255,255,255,0.04)",
+                  minWidth: 820,
+                }}>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-bold uppercase tracking-widest"
+                      style={{ fontFamily: "'Oswald',sans-serif", color: "#c9a84c" }}>
+                      Логин и пароль
+                    </h3>
+                    <button type="button" onClick={() => { setCredsId(null); setCredsForm(emptyCredsForm()); }} className="p-1 opacity-50 hover:opacity-100" style={{ color: "#fff" }}>
+                      <Icon name="X" size={16} />
+                    </button>
+                  </div>
+                  <form onSubmit={handleSetCreds} className="grid sm:grid-cols-2 gap-4">
+                    <Field label="Логин" placeholder="instructor_login" value={credsForm.login} onChange={v => setCreds("login", v)} accent="#c9a84c" />
+                    <Field label="Пароль" placeholder="Надёжный пароль" type="password" value={credsForm.password} onChange={v => setCreds("password", v)} accent="#c9a84c" />
+                    <div className="sm:col-span-2">
+                      <button type="submit" disabled={credsSaving}
+                        className="px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-all hover:opacity-90 disabled:opacity-50"
+                        style={{ background: "linear-gradient(135deg,#a87a20,#c9a84c)", color: "#fff" }}>
+                        {credsSaving ? "Сохраняю..." : "Сохранить"}
                       </button>
                     </div>
                   </form>
