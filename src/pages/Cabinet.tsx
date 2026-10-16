@@ -6,6 +6,7 @@ import {
   type Instructor, type ShodhanEvent,
 } from "@/lib/api";
 import Icon from "@/components/ui/icon";
+import ProfileEditor from "@/components/ProfileEditor";
 
 type EventForm = {
   description: string;
@@ -42,6 +43,7 @@ export default function Cabinet() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [editProfile, setEditProfile] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -170,6 +172,12 @@ export default function Cabinet() {
               {instructor?.cities?.join(", ")}
             </p>
           </div>
+          <button onClick={() => setEditProfile(v => !v)}
+            className="flex items-center gap-1.5 text-xs px-4 py-2 rounded-full transition-all hover:opacity-80"
+            style={{ border: "1px solid rgba(92,184,110,0.4)", color: "#5cb86e" }}>
+            <Icon name="Pencil" size={12} />
+            Редактировать профиль
+          </button>
           <div className="flex items-center gap-2">
             <div className="text-center px-5 py-3 rounded-xl"
               style={{ background: "rgba(92,184,110,0.08)", border: "1px solid rgba(92,184,110,0.15)" }}>
@@ -187,6 +195,19 @@ export default function Cabinet() {
             </div>
           </div>
         </div>
+
+        {editProfile && instructor && (
+          <ProfileEditor
+            instructor={instructor}
+            onClose={() => setEditProfile(false)}
+            onSaved={me => {
+              setInstructor(me);
+              setEditProfile(false);
+              setSuccessMsg("Профиль обновлён!");
+              setTimeout(() => setSuccessMsg(""), 3000);
+            }}
+          />
+        )}
 
         {/* ── УВЕДОМЛЕНИЕ ── */}
         {successMsg && (

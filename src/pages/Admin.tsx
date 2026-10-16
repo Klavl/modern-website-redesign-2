@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMe, logout, adminListInstructors, adminCreateInstructor, adminDeleteInstructor, adminSetCredentials, adminUpdateInstructor, type Instructor } from "@/lib/api";
 import Icon from "@/components/ui/icon";
+import PhotoUploader from "@/components/PhotoUploader";
 
 const emptyForm = () => ({ full_name: "", login: "", password: "", cities: [] as string[], gender: "", age: "", experience_years: "", telegram: "", vk: "" });
 const emptyCredsForm = () => ({ login: "", password: "" });
@@ -488,7 +489,7 @@ export default function Admin() {
                     <Field label="Стаж (лет)" type="number" value={editForm.experience_years} onChange={v => setEdit("experience_years", v)} />
                     <Field label="Telegram" placeholder="@username" value={editForm.telegram} onChange={v => setEdit("telegram", v)} />
                     <Field label="ВКонтакте" placeholder="@id или ссылка" value={editForm.vk} onChange={v => setEdit("vk", v)} />
-                    <Field label="Ссылка на фото" placeholder="https://..." value={editForm.photo_url} onChange={v => setEdit("photo_url", v)} />
+                    <PhotoUploader photoUrl={editForm.photo_url} instructorId={editId!} onChange={u => { setEdit("photo_url", u); loadData(); }} />
                     <div className="sm:col-span-2 lg:col-span-1">
                       <label className="block text-xs font-semibold tracking-widest uppercase mb-2"
                         style={{ color: "rgba(92,184,110,0.8)", fontFamily: "'Oswald',sans-serif" }}>О себе</label>

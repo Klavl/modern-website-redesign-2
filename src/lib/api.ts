@@ -122,9 +122,31 @@ export function getCachedInstructor(): Instructor | null {
   return raw ? JSON.parse(raw) : null;
 }
 
-export async function updateProfile(bio: string, cities: string[], photo_url: string) {
+export type ProfileData = {
+  full_name: string;
+  cities: string[];
+  gender: string;
+  age: number | null;
+  experience_years: number | null;
+  telegram: string;
+  vk: string;
+  bio: string;
+  photo_url: string;
+};
+
+export async function updateProfile(data: ProfileData) {
   const token = getToken();
-  return callAuth({ action: "update", bio, cities, photo_url }, token || undefined);
+  return callAuth({ action: "update", ...data }, token || undefined);
+}
+
+export async function fetchPhotoByUrl(url: string): Promise<{ data_url?: string; error?: string }> {
+  const token = getToken();
+  return callAuth({ action: "fetch_photo", url }, token || undefined);
+}
+
+export async function uploadPhoto(image: string, original: string, instructorId?: number): Promise<{ photo_url?: string; error?: string }> {
+  const token = getToken();
+  return callAuth({ action: "upload_photo", image, original, instructor_id: instructorId }, token || undefined);
 }
 
 // ── EVENTS ───────────────────────────────────────────────────────────────────
