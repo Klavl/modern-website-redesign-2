@@ -2,7 +2,7 @@ import { useState } from "react";
 import FadeIn from "./FadeIn";
 import Icon from "@/components/ui/icon";
 
-const COVER = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/f20895ca-6d45-426c-acf2-a17a0dffda27.png";
+const COVER = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/2f08d0a6-8d38-4bed-a0bc-e867e2e45300.png";
 const EMBED = "https://rutube.ru/play/embed/ff6fb89cc23dfdd417528a5a76f2b029/";
 
 export default function VideoSection() {

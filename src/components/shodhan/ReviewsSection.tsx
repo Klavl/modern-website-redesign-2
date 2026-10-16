@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 
 const VIDEOS = [
-  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/da1ab465-1999-45d9-aa6e-43ad77683b4d.mp4", thumb: "https://cdn.poehali.dev/files/be81bf2f-786d-4213-bf96-0d4bd69fca2d.png" },
-  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/862ae1ff-3a13-4faf-82ed-530a2ea86ab2.mp4", thumb: "https://cdn.poehali.dev/files/502b918d-b9b8-4a4a-9bf1-d2b55e19ab56.png" },
-  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/c7637282-ea33-42be-b55d-90aa666c98db.mp4", thumb: "https://cdn.poehali.dev/files/4b3d69d0-3fe6-43d7-91cc-3899627ba69f.png" },
-  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/6622ca89-229a-4ed2-9114-061944e49083.mp4", thumb: "https://cdn.poehali.dev/files/fbf9416d-15fa-445c-a8f3-891541efcbe3.png" },
-  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/adccb58e-e130-4010-b68a-e4d7729008da.mp4", thumb: "https://cdn.poehali.dev/files/c91c1995-3d98-4b44-8b87-261d3324f0bb.png" },
-  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/32db6bcb-65f8-4862-9cd9-5f935d82de28.mp4", thumb: "https://cdn.poehali.dev/files/e3025405-1d6d-473a-9876-1f081ac07ed6.png" },
-  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/5bee119b-d7ad-4748-8686-31bf9a493d01.mp4", thumb: "https://cdn.poehali.dev/files/e988c1ba-ff18-4d30-a981-1371a234b499.png" },
-  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/dd2aa8c0-c51c-4c2d-b901-df710acbc2c1.mp4", thumb: "https://cdn.poehali.dev/files/f7cf5a93-c303-44c7-83c7-e6a9a1690eb3.png" },
+  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/38c1d0e2-bf63-4031-85c5-684e4d1d9abc.mp4", thumb: "https://cdn.poehali.dev/files/be81bf2f-786d-4213-bf96-0d4bd69fca2d.png" },
+  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/b52c42dd-5101-4221-8918-7c4753e7abe2.mp4", thumb: "https://cdn.poehali.dev/files/502b918d-b9b8-4a4a-9bf1-d2b55e19ab56.png" },
+  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/b2210c43-877e-443b-8523-75889ebb5bc8.mp4", thumb: "https://cdn.poehali.dev/files/4b3d69d0-3fe6-43d7-91cc-3899627ba69f.png" },
+  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/4211bba9-032f-4696-8524-c4435e7cbcee.mp4", thumb: "https://cdn.poehali.dev/files/fbf9416d-15fa-445c-a8f3-891541efcbe3.png" },
+  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/c4dbb6bb-6883-4e09-b76d-d8e129a294b0.mp4", thumb: "https://cdn.poehali.dev/files/c91c1995-3d98-4b44-8b87-261d3324f0bb.png" },
+  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/bfdde9d7-74ad-4380-9e3f-6774d681a78b.mp4", thumb: "https://cdn.poehali.dev/files/e3025405-1d6d-473a-9876-1f081ac07ed6.png" },
+  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/266f419a-6e02-427e-bf17-1e0d4b06679e.mp4", thumb: "https://cdn.poehali.dev/files/e988c1ba-ff18-4d30-a981-1371a234b499.png" },
+  { url: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/f8cee5a5-485f-4717-bd7b-a3d2f0e20428.mp4", thumb: "https://cdn.poehali.dev/files/f7cf5a93-c303-44c7-83c7-e6a9a1690eb3.png" },
 ];
 
 function VideoCard({ url, thumb, index }: { url: string; thumb: string; index: number }) {

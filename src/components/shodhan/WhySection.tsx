@@ -2,19 +2,19 @@ import FadeIn from "./FadeIn";
 
 const CARDS = [
   {
-    img: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/files/222c8ac9-87c0-4cc7-8b91-6c5be23f56f2.jpg",
+    img: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/5851e473-d903-4808-8201-f4cb706c3b38.png",
     text: "Чувствуешь выгорание, находишься в эмоциональном кризисе, без сил и энергии",
   },
   {
-    img: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/files/71d36cfa-b023-4dcb-a4bb-fd18a0dcabbb.jpg",
+    img: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/44fdf56f-3334-477c-8169-56ba4b4814d7.png",
     text: "Испытываешь депрессию, фобии, подвержен зависимостям (курение, алкоголь, наркотики и пр.)",
   },
   {
-    img: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/files/24b66719-00e5-4600-9ffb-0fc6706b2426.jpg",
+    img: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/598eee15-3023-47dc-a697-11f0ca2ca35e.png",
     text: "Часто болеешь, появились хронические заболевания, ощущаешь зажимы в теле, боли в суставах, спине",
   },
   {
-    img: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/files/a36555eb-7760-4e6b-b870-5eb79db19db4.jpg",
+    img: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/a91c6976-1ffd-4806-abf5-dab5595498f6.png",
     text: "Хочешь вернуть радость жизни, энергию, вдохновение, чувство благодарности, ресурсное состояние",
   },
 ];

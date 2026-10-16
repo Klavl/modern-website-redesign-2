@@ -22,9 +22,9 @@ export const useInView = (threshold = 0.1) => {
   return { ref, inView };
 };
 
-export const DMITRY_PHOTO = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/6e2df17f-042f-4f94-95b3-dfc3557a23c0.png";
+export const DMITRY_PHOTO = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/346eef8a-d1b2-49ea-a05f-7f196683b9d3.JPG";
 
-export const GROUP_PHOTO = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/b6c1465d-923c-4a06-95af-2ede37c4ad60.jpg";
+export const GROUP_PHOTO = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/c9310d12-d61f-4eba-841e-989d5b102d2c.jpg";
 
 export const INSTRUCTORS_MAIN = [
   { img: DMITRY_PHOTO },
@@ -86,7 +86,6 @@ export const INSTRUCTORS_FULL = [
 
 export const NAV = [
   { label: "О методе", href: "#about" },
-  { label: "Практики", href: "#elements" },
   { label: "Инструкторы", href: "#instructors" },
   { label: "Мероприятия", href: "#events" },
   { label: "Контакты", href: "#contact" },

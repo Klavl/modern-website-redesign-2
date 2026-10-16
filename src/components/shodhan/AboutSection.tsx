@@ -6,7 +6,7 @@ import WhySection from "./WhySection";
 import { DMITRY_PHOTO, ELEMENTS_16, AFTER_MEDITATION } from "./shared";
 import type { Instructor } from "@/lib/api";
 
-const VIDEO_COVER = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/f20895ca-6d45-426c-acf2-a17a0dffda27.png";
+const VIDEO_COVER = "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/bucket/2f08d0a6-8d38-4bed-a0bc-e867e2e45300.png";
 const VIDEO_EMBED = "https://rutube.ru/play/embed/ff6fb89cc23dfdd417528a5a76f2b029/";
 
 export default function AboutSection({ instructors = [] }: { instructors?: Instructor[] }) {
