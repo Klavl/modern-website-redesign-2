@@ -284,3 +284,4 @@
     background: rgba(201, 168, 76, 0.6);
   }
 }
+.shodhan-dark-tiles { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9) saturate(0.6); }

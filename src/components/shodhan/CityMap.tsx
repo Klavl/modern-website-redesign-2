@@ -88,16 +88,11 @@ export default function CityMap() {
         scrollWheelZoom: false,
       });
 
-      // Dark tile layer from CartoDB
-      L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-        {
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          subdomains: "abcd",
-          maxZoom: 19,
-        }
-      ).addTo(map as L.Map);
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 18,
+        className: "shodhan-dark-tiles",
+      }).addTo(map as L.Map);
 
       // Custom green circle marker icon
       const createIcon = () =>

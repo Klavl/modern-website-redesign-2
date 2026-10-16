@@ -8,6 +8,17 @@ type Props = {
   events: ShodhanEvent[];
 };
 
+const tgLink = (v?: string) => {
+  const t = (v || "").trim();
+  if (!t) return "";
+  return t.startsWith("http") ? t : `https://t.me/${t.replace(/^@/, "")}`;
+};
+const vkLink = (v?: string) => {
+  const t = (v || "").trim();
+  if (!t) return "";
+  return t.startsWith("http") ? t : `https://vk.com/${t.replace(/^@/, "")}`;
+};
+
 export default function EventsSection({ events }: Props) {
   const [city, setCity] = useState<string>("all");
 
@@ -176,19 +187,35 @@ export default function EventsSection({ events }: Props) {
                           {ev.instructor_name}
                         </span>
                       </div>
-                      {ev.contact_link ? (
-                        <a href={ev.contact_link} target="_blank" rel="noopener noreferrer"
-                          className="text-xs px-4 py-1.5 rounded-full font-medium transition-all duration-200 hover:opacity-80 shrink-0"
-                          style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff", fontFamily: "'Montserrat',sans-serif" }}>
-                          Записаться
-                        </a>
-                      ) : (
-                        <a href="#contact"
-                          className="text-xs px-4 py-1.5 rounded-full font-medium transition-all duration-200 hover:opacity-80 shrink-0"
-                          style={{ border: "1px solid rgba(92,184,110,0.3)", color: "#5cb86e" }}>
-                          Написать
-                        </a>
-                      )}
+                      <div className="flex items-center gap-2 shrink-0">
+                        {tgLink(ev.instructor_telegram) && (
+                          <a href={tgLink(ev.instructor_telegram)} target="_blank" rel="noopener noreferrer" title="Telegram"
+                            className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:opacity-80"
+                            style={{ background: "rgba(42,171,238,0.15)", border: "1px solid rgba(42,171,238,0.4)", color: "#2aabee" }}>
+                            <Icon name="Send" size={14} />
+                          </a>
+                        )}
+                        {vkLink(ev.instructor_vk) && (
+                          <a href={vkLink(ev.instructor_vk)} target="_blank" rel="noopener noreferrer" title="ВКонтакте"
+                            className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold transition-all hover:opacity-80"
+                            style={{ background: "rgba(76,117,163,0.2)", border: "1px solid rgba(100,160,255,0.45)", color: "#6ea4ff", fontFamily: "'Montserrat',sans-serif" }}>
+                            VK
+                          </a>
+                        )}
+                        {ev.contact_link ? (
+                          <a href={ev.contact_link} target="_blank" rel="noopener noreferrer"
+                            className="text-xs px-4 py-1.5 rounded-full font-medium transition-all duration-200 hover:opacity-80"
+                            style={{ background: "linear-gradient(135deg,#3a8f4a,#5cb86e)", color: "#fff", fontFamily: "'Montserrat',sans-serif" }}>
+                            Записаться
+                          </a>
+                        ) : !tgLink(ev.instructor_telegram) && !vkLink(ev.instructor_vk) ? (
+                          <a href="#contact"
+                            className="text-xs px-4 py-1.5 rounded-full font-medium transition-all duration-200 hover:opacity-80"
+                            style={{ border: "1px solid rgba(92,184,110,0.3)", color: "#5cb86e" }}>
+                            Написать
+                          </a>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
                 </FadeIn>

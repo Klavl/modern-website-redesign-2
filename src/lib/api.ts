@@ -36,6 +36,8 @@ export type ShodhanEvent = {
   instructor_name?: string;
   instructor_photo?: string;
   instructor_id?: number;
+  instructor_telegram?: string;
+  instructor_vk?: string;
 };
 
 async function callAuth(body: Record<string, unknown>, token?: string) {

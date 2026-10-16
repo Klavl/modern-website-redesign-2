@@ -339,10 +339,10 @@ export default function AboutSection({ instructors = [] }: { instructors?: Instr
           </FadeIn>
           <div className="grid md:grid-cols-2 gap-6">
             {[
-              { img: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=70", title: "Групповые сессии", desc: "Медитации в группе создают особое поле осознанности. Совместная практика усиливает эффект многократно." },
-              { img: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=70", title: "Индивидуальная работа", desc: "Персональные сессии позволяют работать с конкретными запросами и глубоко погрузиться в практику." },
-              { img: "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600&q=70", title: "Природные интенсивы", desc: "Выездные практики на природе — горы, лес, море. Первоэлементы в их живом воплощении усиливают медитацию." },
-              { img: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=70", title: "Онлайн-практики", desc: "Практикуй Шодхан из любой точки мира. Онлайн-формат сохраняет глубину и эффективность метода." },
+              { img: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/files/c511e9fb-85e3-4e87-a532-c1254a6daf61.jpg", title: "Групповые сессии", desc: "Медитации в группе создают особое поле осознанности. Совместная практика усиливает эффект многократно." },
+              { img: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/files/037f6faa-8479-4964-b9aa-83afaf96ab81.jpg", title: "Индивидуальная работа", desc: "Персональные сессии позволяют работать с конкретными запросами и глубоко погрузиться в практику." },
+              { img: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/files/3adcc1e4-e5df-4f06-aca3-f7854eae4a3e.jpg", title: "Природные интенсивы", desc: "Выездные практики на природе — горы, лес, море. Первоэлементы в их живом воплощении усиливают медитацию." },
+              { img: "https://cdn.poehali.dev/projects/756e28ae-f342-42b1-ab53-44233856dec1/files/0860b2ea-2d0f-4d53-ac78-e295c9abe950.jpg", title: "Онлайн-практики", desc: "Практикуй Шодхан из любой точки мира. Онлайн-формат сохраняет глубину и эффективность метода." },
             ].map((item, i) => (
               <FadeIn key={i} delay={i * 0.08}>
                 <div className="rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-1"

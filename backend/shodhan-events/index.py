@@ -77,7 +77,7 @@ def handler(event: dict, context) -> dict:
         cur.execute("""
             SELECT e.id, e.title, e.description, e.event_date, e.event_time,
                    e.location, e.city, e.price, e.spots, e.contact_link,
-                   i.full_name, i.photo_url, i.id, e.is_mass
+                   i.full_name, i.photo_url, i.id, e.is_mass, i.telegram, i.vk
             FROM shodhan_events e
             JOIN shodhan_instructors i ON i.id = e.instructor_id
             WHERE e.is_active = TRUE AND e.event_date >= CURRENT_DATE
@@ -93,6 +93,7 @@ def handler(event: dict, context) -> dict:
                 "spots": r[8], "contact_link": r[9],
                 "instructor_name": r[10], "instructor_photo": r[11],
                 "instructor_id": r[12], "is_mass": r[13],
+                "instructor_telegram": r[14] or "", "instructor_vk": r[15] or "",
             }
             for r in rows
         ]
