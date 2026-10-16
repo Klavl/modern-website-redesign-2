@@ -3,7 +3,7 @@ import Icon from "@/components/ui/icon";
 import { fetchPhotoByUrl, uploadPhoto } from "@/lib/api";
 
 const FRAME = 280;
-const OUT = 600;
+const OUT = 480;
 
 type Props = {
   photoUrl: string;
@@ -114,10 +114,8 @@ export default function PhotoUploader({ photoUrl, onChange, instructorId, accent
       ctx.fillStyle = "#fff";
       ctx.fillRect(0, 0, OUT, OUT);
       ctx.drawImage(img, sx, sy, sw, sw, 0, 0, OUT, OUT);
-      const cropped = canvas.toDataURL("image/jpeg", 0.9).split(",")[1];
-      const originalIsData = src.startsWith("data:");
-      const original = originalIsData ? src.split(",")[1] : "";
-      const res = await uploadPhoto(cropped, original, instructorId);
+      const cropped = canvas.toDataURL("image/jpeg", 0.82).split(",")[1];
+      const res = await uploadPhoto(cropped, instructorId);
       if (res.error || !res.photo_url) setError(res.error || "Не удалось сохранить фото");
       else { onChange(res.photo_url); setSrc(null); }
     } catch { setError("Ошибка соединения"); }

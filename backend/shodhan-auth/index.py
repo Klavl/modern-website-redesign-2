@@ -4,6 +4,7 @@ action=login              — вход по логину+паролю
 action=me                 — получить профиль (X-Session-Token)
 action=logout             — выход
 action=update             — обновить свой профиль (все поля кроме логина/пароля)
+action=update_credentials — сменить свои логин/пароль
 action=fetch_photo        — скачать фото по ссылке (для обрезки)
 action=upload_photo       — загрузить фото в хранилище
 action=public_instructors — публичный список инструкторов
@@ -53,6 +54,10 @@ def err(msg, code=400):
         "headers": {**cors_headers(), "Content-Type": "application/json"},
         "body": json.dumps({"error": msg}, ensure_ascii=False),
     }
+
+
+def norm_login(v: str) -> str:
+    return re.sub(r"\s+", " ", (v or "").strip()).lower()
 
 
 def hash_password(password: str) -> str:
@@ -197,7 +202,7 @@ def s3_client():
     )
 
 
-def store_photo(full_name, inst_id, data, ctype, original=None, original_ctype=None):
+def store_photo(full_name, inst_id, data, ctype):
     import time
     ext = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif"}[ctype]
     stamp = int(time.time())
@@ -205,9 +210,6 @@ def store_photo(full_name, inst_id, data, ctype, original=None, original_ctype=N
     key = f"instructor-photos/{base}.{ext}"
     s3 = s3_client()
     s3.put_object(Bucket="files", Key=key, Body=data, ContentType=ctype)
-    if original:
-        oext = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif"}[original_ctype]
-        s3.put_object(Bucket="files", Key=f"instructor-photos/originals/{base}.{oext}", Body=original, ContentType=original_ctype)
     return cdn_prefix() + key
 
 
@@ -254,8 +256,8 @@ def handler(event: dict, context) -> dict:
 
         pw_hash = hash_password(password)
         cur.execute(
-            "SELECT id, full_name, cities, bio, photo_url, role FROM shodhan_instructors WHERE login = %s AND password_hash = %s",
-            (login_val, pw_hash),
+            "SELECT id, full_name, cities, bio, photo_url, role FROM shodhan_instructors WHERE lower(login) = lower(%s) AND password_hash = %s",
+            (norm_login(login_val), pw_hash),
         )
         row = cur.fetchone()
         if not row:
@@ -287,11 +289,11 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return err("Токен недействителен", 401)
         inst_id, name, cities, bio, photo_url, role = row
-        cur.execute("SELECT gender, age, experience_years, telegram, vk FROM shodhan_instructors WHERE id = %s", (inst_id,))
-        g, a, e, t, v = cur.fetchone()
+        cur.execute("SELECT gender, age, experience_years, telegram, vk, login FROM shodhan_instructors WHERE id = %s", (inst_id,))
+        g, a, e, t, v, lg = cur.fetchone()
         conn.close()
         return ok({"id": inst_id, "full_name": name, "cities": cities or [], "bio": bio or "", "photo_url": photo_url or "", "role": role,
-                   "gender": g or "", "age": a, "experience_years": e, "telegram": t or "", "vk": v or ""})
+                   "gender": g or "", "age": a, "experience_years": e, "telegram": t or "", "vk": v or "", "login": lg or ""})
 
     # ── LOGOUT ────────────────────────────────────────────────────────────────
     if action == "logout":
@@ -331,6 +333,39 @@ def handler(event: dict, context) -> dict:
         conn.close()
         return ok({"success": True})
 
+    # ── SELF: CHANGE LOGIN / PASSWORD ─────────────────────────────────────────
+    if action == "update_credentials":
+        row = get_instructor_by_token(cur, token)
+        if not row:
+            conn.close()
+            return err("Требуется авторизация", 401)
+        inst_id = row[0]
+        login_val = norm_login(body.get("login") or "")
+        password = (body.get("password") or "").strip()
+        if not login_val:
+            conn.close()
+            return err("Логин не может быть пустым")
+        if password and len(password) < 6:
+            conn.close()
+            return err("Пароль должен быть не короче 6 символов")
+        cur.execute("SELECT id FROM shodhan_instructors WHERE lower(login) = %s AND id != %s", (login_val, inst_id))
+        if cur.fetchone():
+            conn.close()
+            return err("Такой логин уже занят")
+        if password:
+            cur.execute(
+                "UPDATE shodhan_instructors SET login=%s, password_hash=%s, phone=%s WHERE id=%s",
+                (login_val, hash_password(password), "login:" + login_val, inst_id),
+            )
+        else:
+            cur.execute(
+                "UPDATE shodhan_instructors SET login=%s, phone=%s WHERE id=%s",
+                (login_val, "login:" + login_val, inst_id),
+            )
+        conn.commit()
+        conn.close()
+        return ok({"success": True})
+
     # ── PHOTO: FETCH BY LINK (для обрезки в браузере) ─────────────────────────
     if action == "fetch_photo":
         if not get_instructor_by_token(cur, token):
@@ -362,7 +397,6 @@ def handler(event: dict, context) -> dict:
             return err("Инструктор не найден", 404)
         try:
             cropped = base64.b64decode(body.get("image") or "")
-            original = base64.b64decode(body.get("original") or "") or None
         except Exception:
             conn.close()
             return err("Некорректный файл")
@@ -370,10 +404,14 @@ def handler(event: dict, context) -> dict:
         if not cropped or len(cropped) > MAX_IMAGE_BYTES or not ctype:
             conn.close()
             return err("Нужна фотография до 8 МБ")
-        octype = detect_image(original) if original else None
-        if original and (not octype or len(original) > MAX_IMAGE_BYTES):
-            original, octype = None, None
-        url = store_photo(t[0], target_id, cropped, ctype, original, octype)
+        cur.execute("SELECT photo_url FROM shodhan_instructors WHERE id = %s", (target_id,))
+        prev = (cur.fetchone() or [""])[0] or ""
+        url = store_photo(t[0], target_id, cropped, ctype)
+        if prev.startswith(cdn_prefix() + "instructor-photos/") and prev != url:
+            try:
+                s3_client().delete_object(Bucket="files", Key=prev[len(cdn_prefix()):])
+            except Exception:
+                pass
         cur.execute("UPDATE shodhan_instructors SET photo_url = %s WHERE id = %s", (url, target_id))
         conn.commit()
         conn.close()
@@ -530,7 +568,8 @@ def handler(event: dict, context) -> dict:
         if not target_id or not login_val or not password:
             conn.close()
             return err("Заполните id, логин и пароль")
-        cur.execute("SELECT id FROM shodhan_instructors WHERE login = %s AND id != %s", (login_val, target_id))
+        login_val = norm_login(login_val)
+        cur.execute("SELECT id FROM shodhan_instructors WHERE lower(login) = %s AND id != %s", (login_val, target_id))
         if cur.fetchone():
             conn.close()
             return err("Такой логин уже занят")

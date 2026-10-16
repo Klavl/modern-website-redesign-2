@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
 import PhotoUploader from "@/components/PhotoUploader";
-import { updateProfile, getMe, type Instructor } from "@/lib/api";
+import { updateProfile, updateCredentials, getMe, type Instructor } from "@/lib/api";
 
 const inputStyle = { background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" };
 const labelStyle = { color: "rgba(92,184,110,0.8)", fontFamily: "'Oswald',sans-serif" };
@@ -31,9 +31,26 @@ export default function ProfileEditor({ instructor, onSaved, onClose }: {
     bio: instructor.bio || "",
     photo_url: instructor.photo_url || "",
   });
+  const [cred, setCred] = useState({ login: instructor.login || "", password: "" });
+  const [credMsg, setCredMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [credSaving, setCredSaving] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const set = (k: string, v: string) => setF(p => ({ ...p, [k]: v }));
+
+  const saveCreds = async () => {
+    setCredMsg(null); setCredSaving(true);
+    try {
+      const res = await updateCredentials(cred.login, cred.password);
+      if (res.error) setCredMsg({ ok: false, text: res.error });
+      else {
+        setCredMsg({ ok: true, text: "Логин и пароль сохранены" });
+        setCred(c => ({ ...c, password: "" }));
+        await getMe();
+      }
+    } catch { setCredMsg({ ok: false, text: "Ошибка соединения" }); }
+    finally { setCredSaving(false); }
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,6 +119,26 @@ export default function ProfileEditor({ instructor, onSaved, onClose }: {
             <textarea value={f.bio} onChange={e => set("bio", e.target.value)} rows={3} placeholder="Краткое описание..."
               className="w-full rounded-xl px-4 py-3 text-sm outline-none resize-none" style={inputStyle} />
           </Row>
+        </div>
+        <div className="sm:col-span-2 lg:col-span-3 rounded-xl p-4 grid sm:grid-cols-2 gap-4"
+          style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <Row label="Логин (регистр не важен)">
+            <input value={cred.login} onChange={e => setCred(c => ({ ...c, login: e.target.value }))} autoComplete="username"
+              className="w-full rounded-xl px-4 py-3 text-sm outline-none" style={inputStyle} />
+          </Row>
+          <Row label="Новый пароль">
+            <input type="password" value={cred.password} onChange={e => setCred(c => ({ ...c, password: e.target.value }))}
+              placeholder="Оставьте пустым, чтобы не менять" autoComplete="new-password"
+              className="w-full rounded-xl px-4 py-3 text-sm outline-none" style={inputStyle} />
+          </Row>
+          <div className="sm:col-span-2 flex items-center gap-3">
+            <button type="button" onClick={saveCreds} disabled={credSaving || !cred.login.trim()}
+              className="px-5 py-2.5 rounded-xl text-sm font-semibold hover:opacity-80 disabled:opacity-50"
+              style={{ background: "rgba(92,184,110,0.15)", color: "#5cb86e", border: "1px solid rgba(92,184,110,0.35)" }}>
+              {credSaving ? "Сохраняю..." : "Сохранить логин и пароль"}
+            </button>
+            {credMsg && <span className="text-xs" style={{ color: credMsg.ok ? "#7edb95" : "#ff8080" }}>{credMsg.text}</span>}
+          </div>
         </div>
         <PhotoUploader photoUrl={f.photo_url} onChange={u => set("photo_url", u)} />
         {error && <p className="sm:col-span-2 lg:col-span-3 text-sm" style={{ color: "#ff8080" }}>{error}</p>}

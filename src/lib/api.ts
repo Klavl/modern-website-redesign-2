@@ -146,9 +146,14 @@ export async function fetchPhotoByUrl(url: string): Promise<{ data_url?: string;
   return callAuth({ action: "fetch_photo", url }, token || undefined);
 }
 
-export async function uploadPhoto(image: string, original: string, instructorId?: number): Promise<{ photo_url?: string; error?: string }> {
+export async function updateCredentials(login: string, password: string): Promise<{ success?: boolean; error?: string }> {
   const token = getToken();
-  return callAuth({ action: "upload_photo", image, original, instructor_id: instructorId }, token || undefined);
+  return callAuth({ action: "update_credentials", login, password }, token || undefined);
+}
+
+export async function uploadPhoto(image: string, instructorId?: number): Promise<{ photo_url?: string; error?: string }> {
+  const token = getToken();
+  return callAuth({ action: "upload_photo", image, instructor_id: instructorId }, token || undefined);
 }
 
 // ── EVENTS ───────────────────────────────────────────────────────────────────
