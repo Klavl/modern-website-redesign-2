@@ -60,6 +60,11 @@ def norm_login(v: str) -> str:
     return re.sub(r"\s+", " ", (v or "").strip()).lower()
 
 
+def login_taken(cur, login_norm, exclude_id):
+    cur.execute("SELECT id, login FROM shodhan_instructors WHERE login IS NOT NULL")
+    return any(norm_login(l) == login_norm and i != exclude_id for i, l in cur.fetchall())
+
+
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
 
@@ -256,10 +261,11 @@ def handler(event: dict, context) -> dict:
 
         pw_hash = hash_password(password)
         cur.execute(
-            "SELECT id, full_name, cities, bio, photo_url, role FROM shodhan_instructors WHERE lower(login) = lower(%s) AND password_hash = %s",
-            (norm_login(login_val), pw_hash),
+            "SELECT id, full_name, cities, bio, photo_url, role, login FROM shodhan_instructors WHERE password_hash = %s",
+            (pw_hash,),
         )
-        row = cur.fetchone()
+        wanted = norm_login(login_val)
+        row = next((r[:6] for r in cur.fetchall() if norm_login(r[6]) == wanted), None)
         if not row:
             conn.close()
             return err("Неверный логин или пароль")
@@ -348,8 +354,7 @@ def handler(event: dict, context) -> dict:
         if password and len(password) < 6:
             conn.close()
             return err("Пароль должен быть не короче 6 символов")
-        cur.execute("SELECT id FROM shodhan_instructors WHERE lower(login) = %s AND id != %s", (login_val, inst_id))
-        if cur.fetchone():
+        if login_taken(cur, login_val, inst_id):
             conn.close()
             return err("Такой логин уже занят")
         if password:
@@ -569,8 +574,7 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return err("Заполните id, логин и пароль")
         login_val = norm_login(login_val)
-        cur.execute("SELECT id FROM shodhan_instructors WHERE lower(login) = %s AND id != %s", (login_val, target_id))
-        if cur.fetchone():
+        if login_taken(cur, login_val, int(target_id)):
             conn.close()
             return err("Такой логин уже занят")
         pw_hash = hash_password(password)
